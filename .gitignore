@@ -1,0 +1,10 @@
+.next/
+node_modules/
+.convex/
+.env.local
+.env*.local
+*.tsbuildinfo
+next-env.d.ts
+.vercel/
+dist/
+coverage/
