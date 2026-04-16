@@ -185,7 +185,7 @@
   }
 
   .pack-detail-header {
-    @apply grid gap-6 p-6 sm:p-8 xl:grid-cols-[minmax(0,1fr)_280px];
+    @apply grid gap-6 p-6 sm:p-8 xl:grid-cols-[minmax(0,1fr)_240px];
   }
 
   .pack-detail-header-copy {
@@ -193,8 +193,15 @@
   }
 
   .pack-detail-art {
-    @apply overflow-hidden rounded-[18px] border border-[rgba(72,57,39,0.08)] bg-white;
-    min-height: 220px;
+    @apply flex items-center justify-center overflow-hidden rounded-[16px] border border-[rgba(72,57,39,0.08)] bg-[rgba(255,255,255,0.72)] p-3;
+    min-height: 168px;
+  }
+
+  .pack-detail-art .pack-art-shell {
+    @apply mx-auto;
+    width: 100%;
+    max-width: 188px;
+    aspect-ratio: 16 / 9;
   }
 
   .pack-trust-badge {

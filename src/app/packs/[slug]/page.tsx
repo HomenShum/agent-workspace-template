@@ -53,38 +53,35 @@ export default async function PackDetailPage({
                 </div>
               </div>
               <div className="pack-detail-art" style={{ background: pack.gradient }}>
-                <PackArtwork variant={pack.slug} />
+                <PackArtwork variant={pack.slug} compact />
               </div>
             </section>
 
-            <section className="grid gap-5 md:grid-cols-2">
-              <InfoBlock
-                title="Use when"
-                items={pack.useWhen}
-                description="These are the situations where this harness earns its extra structure."
-              />
-              <InfoBlock
-                title="Avoid when"
-                items={pack.avoidWhen}
-                description="This keeps the pack from becoming a default hammer for every workflow."
-              />
-            </section>
-
             <section className="glass-panel px-6 py-6 sm:px-8">
-              <p className="section-label">Key outcomes</p>
+              <p className="section-label">When to use this pack</p>
               <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
-                What this pack is supposed to improve
+                Fit, boundaries, and expected payoff
               </h2>
-              <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-700">
-                {pack.keyOutcomes.map((item) => (
-                  <li key={item} className="rounded-[18px] border border-[rgba(72,57,39,0.12)] bg-white px-4 py-3">
-                    {item}
-                  </li>
-                ))}
-              </ul>
+              <div className="mt-5 grid gap-5 lg:grid-cols-3">
+                <ContextGroup
+                  title="Use when"
+                  items={pack.useWhen}
+                  description="These are the situations where this pack earns its extra structure."
+                />
+                <ContextGroup
+                  title="Avoid when"
+                  items={pack.avoidWhen}
+                  description="This keeps the pack from becoming a default hammer."
+                />
+                <ContextGroup
+                  title="What it improves"
+                  items={pack.keyOutcomes}
+                  description="These are the concrete outcomes you should expect if the pack is implemented well."
+                />
+              </div>
             </section>
 
-            <section className="grid gap-5 xl:grid-cols-2">
+            <section className="grid gap-5">
               <InstructionPanel
                 title="Minimal instructions"
                 description="Use this when you want the smallest useful starting point."
@@ -99,7 +96,7 @@ export default async function PackDetailPage({
               />
             </section>
 
-            <section className="grid gap-5 xl:grid-cols-2">
+            <section className="grid gap-5 lg:grid-cols-2">
               <InfoBlock
                 title="Evaluation checklist"
                 items={pack.evaluationChecklist}
@@ -137,7 +134,7 @@ export default async function PackDetailPage({
 
           <aside className="space-y-5 xl:sticky xl:top-24 xl:self-start">
             <section className="glass-panel px-6 py-6">
-              <p className="section-label">Pack metadata</p>
+              <p className="section-label">At a glance</p>
               <div className="mt-4 grid gap-3">
                 {pack.metrics.map((metric) => (
                   <div
@@ -152,11 +149,21 @@ export default async function PackDetailPage({
                   <p className="section-label">Updated</p>
                   <p className="mt-2 text-base font-semibold text-slate-950">{pack.updatedAt}</p>
                 </div>
+                <div className="rounded-[18px] border border-[rgba(72,57,39,0.12)] bg-white px-4 py-4">
+                  <p className="section-label">Compatibility</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {pack.compatibility.map((item) => (
+                      <span key={item} className="directory-pill directory-pill-small">
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
             </section>
 
             <section className="glass-panel px-6 py-6">
-              <p className="section-label">Examples</p>
+              <p className="section-label">Links</p>
               <div className="mt-4 grid gap-3">
                 {pack.examples.map((example) =>
                   example.external ? (
@@ -183,6 +190,32 @@ export default async function PackDetailPage({
         </div>
       </div>
     </main>
+  );
+}
+
+function ContextGroup({
+  title,
+  description,
+  items,
+}: {
+  title: string;
+  description: string;
+  items: string[];
+}) {
+  return (
+    <section className="space-y-3 rounded-[18px] border border-[rgba(72,57,39,0.1)] bg-white px-4 py-4">
+      <div>
+        <p className="section-label">{title}</p>
+        <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
+      </div>
+      <ul className="space-y-2 text-sm leading-6 text-slate-700">
+        {items.map((item) => (
+          <li key={item} className="border-t border-[rgba(72,57,39,0.08)] pt-2 first:border-t-0 first:pt-0">
+            {item}
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 
