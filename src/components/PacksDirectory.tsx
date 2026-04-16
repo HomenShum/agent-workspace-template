@@ -7,11 +7,13 @@ import { PackArtwork } from "@/components/PackArtwork";
 
 type SortMode = "featured" | "updated" | "name";
 type TrustMode = "all" | "Verified" | "Community";
+type PublisherMode = "all" | string;
 
 export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedTrust, setSelectedTrust] = useState<TrustMode>("all");
+  const [selectedPublisher, setSelectedPublisher] = useState<PublisherMode>("all");
   const [sortMode, setSortMode] = useState<SortMode>("featured");
 
   const normalizedQuery = query.trim().toLowerCase();
@@ -24,6 +26,16 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
         count: packs.filter((pack) => pack.category === category).length,
       })),
   ];
+  const publishers = [
+    { name: "All", slug: "all", count: packs.length },
+    ...Array.from(new Set(packs.map((pack) => pack.publisher)))
+      .sort((left, right) => left.localeCompare(right))
+      .map((publisher) => ({
+        name: publisher,
+        slug: getPublisherProfile(publisher)?.slug ?? publisher,
+        count: packs.filter((pack) => pack.publisher === publisher).length,
+      })),
+  ];
 
   const filteredPacks = packs
     .filter((pack) => {
@@ -31,6 +43,9 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
         return false;
       }
       if (selectedTrust !== "all" && pack.trust !== selectedTrust) {
+        return false;
+      }
+      if (selectedPublisher !== "all" && pack.publisher !== selectedPublisher) {
         return false;
       }
       if (!normalizedQuery) {
@@ -75,6 +90,7 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
   const activeFilters = [
     selectedCategory !== "All" ? selectedCategory : null,
     selectedTrust !== "all" ? selectedTrust : null,
+    selectedPublisher !== "all" ? selectedPublisher : null,
     normalizedQuery ? `Search: ${query.trim()}` : null,
   ].filter(Boolean) as string[];
 
@@ -166,6 +182,20 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
                   </button>
                 ))}
               </div>
+              <div className="mt-3 grid gap-2">
+                <div className="directory-legend-row">
+                  <span className="pack-trust-badge pack-trust-badge-verified">Verified</span>
+                  <span className="text-xs leading-5 text-slate-500">
+                    Source-backed packs reviewed against a stronger implementation bar.
+                  </span>
+                </div>
+                <div className="directory-legend-row">
+                  <span className="pack-trust-badge">Community</span>
+                  <span className="text-xs leading-5 text-slate-500">
+                    Useful patterns from the wider ecosystem that still need more field proof.
+                  </span>
+                </div>
+              </div>
             </div>
 
             <div>
@@ -182,6 +212,29 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
                   >
                     <span>{category.name}</span>
                     <span className="directory-filter-count">{category.count}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="section-label">Publishers</p>
+              <div className="mt-2 space-y-1">
+                {publishers.map((publisher) => (
+                  <button
+                    key={publisher.slug}
+                    type="button"
+                    onClick={() =>
+                      setSelectedPublisher(publisher.name === "All" ? "all" : publisher.name)
+                    }
+                    className={`directory-category-row ${
+                      (publisher.name === "All" ? selectedPublisher === "all" : selectedPublisher === publisher.name)
+                        ? "directory-category-row-active"
+                        : ""
+                    }`}
+                  >
+                    <span>{publisher.name}</span>
+                    <span className="directory-filter-count">{publisher.count}</span>
                   </button>
                 ))}
               </div>
@@ -292,7 +345,7 @@ function DirectoryLink({
   );
 }
 
-function PackTile({ pack, featured = false }: { pack: HarnessPack; featured?: boolean }) {
+export function PackTile({ pack, featured = false }: { pack: HarnessPack; featured?: boolean }) {
   return (
     <Link
       href={`/packs/${pack.slug}`}

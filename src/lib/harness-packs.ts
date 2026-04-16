@@ -42,6 +42,7 @@ export type HarnessPack = {
 };
 
 export type PublisherProfile = {
+  slug: string;
   name: string;
   initials: string;
   status: "Verified publisher" | "Community publisher";
@@ -51,6 +52,7 @@ export type PublisherProfile = {
 
 export const publisherProfiles: Record<string, PublisherProfile> = {
   "Agent Workspace": {
+    slug: "agent-workspace",
     name: "Agent Workspace",
     initials: "AW",
     status: "Verified publisher",
@@ -58,6 +60,7 @@ export const publisherProfiles: Record<string, PublisherProfile> = {
     href: "https://github.com/HomenShum/agent-workspace-template",
   },
   "Agent Workspace Labs": {
+    slug: "agent-workspace-labs",
     name: "Agent Workspace Labs",
     initials: "AL",
     status: "Verified publisher",
@@ -65,6 +68,7 @@ export const publisherProfiles: Record<string, PublisherProfile> = {
     href: "https://github.com/HomenShum/agent-workspace-template",
   },
   "Open Workflow Lab": {
+    slug: "open-workflow-lab",
     name: "Open Workflow Lab",
     initials: "OW",
     status: "Community publisher",
@@ -606,4 +610,12 @@ export function getHarnessPack(slug: string) {
 
 export function getPublisherProfile(name: string) {
   return publisherProfiles[name];
+}
+
+export function getPublisherProfileBySlug(slug: string) {
+  return Object.values(publisherProfiles).find((publisher) => publisher.slug === slug);
+}
+
+export function getPacksByPublisher(name: string) {
+  return harnessPacks.filter((pack) => pack.publisher === name);
 }

@@ -197,15 +197,21 @@ export default async function PackDetailPage({
                     </div>
                   </div>
                   <p className="text-sm leading-6 text-slate-600">{publisher.description}</p>
-                  <a
-                    href={publisher.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="directory-link-button"
-                  >
-                    <span>Open publisher profile</span>
-                    <span aria-hidden="true">Open</span>
-                  </a>
+                  <div className="grid gap-2">
+                    <Link href={`/publishers/${publisher.slug}`} className="directory-link-button">
+                      <span>View publisher packs</span>
+                      <span aria-hidden="true">Open</span>
+                    </Link>
+                    <a
+                      href={publisher.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="directory-link-button"
+                    >
+                      <span>Open GitHub profile</span>
+                      <span aria-hidden="true">Open</span>
+                    </a>
+                  </div>
                 </div>
               </section>
             ) : null}
