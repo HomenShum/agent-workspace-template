@@ -26,13 +26,10 @@ export default async function PackDetailPage({
   return (
     <main className="app-shell">
       <div className="app-frame">
-        <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_320px]">
           <div className="space-y-8">
-            <section className="glass-panel overflow-hidden">
-              <div className="pack-detail-hero" style={{ background: pack.gradient }}>
-                <PackArtwork variant={pack.slug} />
-              </div>
-              <div className="space-y-6 px-6 py-7 sm:px-8">
+            <section className="glass-panel pack-detail-header">
+              <div className="pack-detail-header-copy">
                 <div className="flex flex-wrap items-center gap-2">
                   <Link href="/" className="directory-pill directory-pill-small">
                     Back to directory
@@ -54,6 +51,9 @@ export default async function PackDetailPage({
                     </span>
                   ))}
                 </div>
+              </div>
+              <div className="pack-detail-art" style={{ background: pack.gradient }}>
+                <PackArtwork variant={pack.slug} />
               </div>
             </section>
 
