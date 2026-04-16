@@ -8,9 +8,7 @@ import { useOperatorSession } from "@/components/OperatorSessionProvider";
 const navLinks = [
   { href: "/", label: "Directory" },
   { href: "/submit", label: "Submit" },
-  { href: "/chat", label: "Studio Chat" },
-  { href: "/workspace-a", label: "Builder Preview" },
-  { href: "/workspace-b", label: "Reviewer Preview" },
+  { href: "/chat", label: "Studio" },
 ];
 
 export function Sidebar() {
@@ -37,12 +35,13 @@ function HeaderInner() {
   const pathname = usePathname();
   const { operator } = useOperatorSession();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const showOperator = !!operator && pathname !== "/";
 
   return (
     <header className="sticky top-0 z-40 border-b border-[rgba(72,57,39,0.12)] bg-[rgba(255,250,244,0.92)] backdrop-blur">
       <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-4 py-3 sm:px-5">
         <div className="flex items-center gap-5">
-          <Link href="/" className="text-base font-semibold tracking-[-0.03em] text-slate-950">
+          <Link href="/" className="header-brand">
             Agent Workspace
           </Link>
           <nav className="hidden items-center gap-1 md:flex">
@@ -52,7 +51,7 @@ function HeaderInner() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`rounded-full px-3 py-2 text-sm font-medium transition ${
+                  className={`header-nav-link ${
                     isActive
                       ? "bg-slate-950 text-white"
                       : "text-slate-600 hover:bg-white hover:text-slate-950"
@@ -67,36 +66,34 @@ function HeaderInner() {
 
         <div className="hidden items-center gap-3 md:flex">
           <a
-            href="https://agentworkspace.attrition.sh"
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-full border border-[rgba(72,57,39,0.12)] bg-white px-3 py-2 text-xs text-slate-600 transition hover:bg-slate-50 hover:text-slate-950"
-          >
-            agentworkspace.attrition.sh
-          </a>
-          <a
             href="https://github.com/HomenShum/agent-workspace-template"
             target="_blank"
             rel="noreferrer"
-            className="rounded-full border border-[rgba(72,57,39,0.12)] bg-white px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50"
+            className="header-utility-link"
           >
             GitHub
           </a>
-          <div className="rounded-full border border-[rgba(72,57,39,0.12)] bg-white px-3 py-2 text-xs text-slate-600">
-            {operator ? (
+          <a
+            href="https://agentworkspace.attrition.sh"
+            target="_blank"
+            rel="noreferrer"
+            className="header-utility-link"
+          >
+            Public site
+          </a>
+          {showOperator ? (
+            <div className="header-operator-pill">
               <>
-                Active: <span className="font-semibold text-slate-950">{operator.name}</span>
+                Active operator: <span className="font-semibold text-slate-950">{operator.name}</span>
               </>
-            ) : (
-              "No operator selected"
-            )}
-          </div>
+            </div>
+          ) : null}
         </div>
 
         <button
           type="button"
           onClick={() => setMobileOpen((current) => !current)}
-          className="rounded-full border border-[rgba(72,57,39,0.12)] bg-white px-3 py-2 text-sm text-slate-700 md:hidden"
+          className="header-utility-link md:hidden"
         >
           Menu
         </button>
@@ -136,6 +133,11 @@ function HeaderInner() {
             >
               GitHub
             </a>
+            {showOperator ? (
+              <div className="rounded-xl bg-white px-3 py-2 text-sm text-slate-700">
+                Active operator: <span className="font-medium text-slate-950">{operator.name}</span>
+              </div>
+            ) : null}
           </div>
         </div>
       ) : null}

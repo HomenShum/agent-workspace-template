@@ -98,6 +98,22 @@
     @apply rounded-full border border-[rgba(72,57,39,0.12)] bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50;
   }
 
+  .header-brand {
+    @apply text-base font-semibold tracking-[-0.03em] text-slate-950;
+  }
+
+  .header-nav-link {
+    @apply rounded-full px-3 py-2 text-sm font-medium transition;
+  }
+
+  .header-utility-link {
+    @apply rounded-full border border-[rgba(72,57,39,0.12)] bg-white px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50;
+  }
+
+  .header-operator-pill {
+    @apply rounded-full border border-[rgba(72,57,39,0.12)] bg-white px-3 py-2 text-xs text-slate-600;
+  }
+
   .directory-header {
     @apply flex flex-col gap-5 rounded-[22px] border border-[rgba(72,57,39,0.1)] bg-[rgba(255,253,249,0.96)] px-6 py-6 sm:flex-row sm:items-end sm:justify-between sm:px-7;
   }
@@ -230,6 +246,26 @@
 
   .pack-trust-badge {
     @apply shrink-0 rounded-full border border-[rgba(72,57,39,0.08)] bg-[rgba(255,255,255,0.92)] px-3 py-1 text-xs font-medium text-slate-700;
+  }
+
+  .pack-trust-badge-verified {
+    @apply border-emerald-200 bg-emerald-50 text-emerald-700;
+  }
+
+  .pack-category-label {
+    @apply text-[11px] font-medium uppercase tracking-[0.08em] text-slate-400;
+  }
+
+  .pack-card-footer {
+    @apply flex items-center justify-between gap-3;
+  }
+
+  .pack-publisher-badge {
+    @apply inline-flex items-center gap-2 rounded-full border border-[rgba(72,57,39,0.08)] bg-[rgba(250,247,241,0.92)] px-2.5 py-1 text-xs text-slate-600;
+  }
+
+  .pack-publisher-dot {
+    @apply h-1.5 w-1.5 rounded-full bg-slate-400;
   }
 
   .directory-metadata-row {

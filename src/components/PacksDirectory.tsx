@@ -271,8 +271,10 @@ function PackTile({ pack, featured = false }: { pack: HarnessPack; featured?: bo
       </div>
       <div className="pack-card-body">
         <div className="flex items-center justify-between gap-3">
-          <span className="pack-trust-badge">{pack.trust}</span>
-          <span className="text-xs text-slate-500">{pack.category}</span>
+          <span className={`pack-trust-badge ${pack.trust === "Verified" ? "pack-trust-badge-verified" : ""}`}>
+            {pack.trust}
+          </span>
+          <span className="pack-category-label">{pack.category}</span>
         </div>
         <div className="space-y-2">
           <h3 className="text-lg font-semibold text-slate-950">{pack.name}</h3>
@@ -286,9 +288,12 @@ function PackTile({ pack, featured = false }: { pack: HarnessPack; featured?: bo
             </span>
           ))}
         </div>
-        <div className="flex items-center justify-between text-xs text-slate-500">
-          <span>{pack.publisher}</span>
-          <span>{pack.updatedAt}</span>
+        <div className="pack-card-footer">
+          <span className="pack-publisher-badge">
+            <span className="pack-publisher-dot" aria-hidden="true" />
+            {pack.publisher}
+          </span>
+          <span className="text-xs text-slate-500">{pack.updatedAt}</span>
         </div>
       </div>
     </Link>
