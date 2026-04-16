@@ -5,7 +5,7 @@ async function resolveWithMethod(targetUrl: string, method: "HEAD" | "GET") {
     method,
     redirect: "follow",
     headers: {
-      "user-agent": "agent-workspace-template/1.0",
+      "user-agent": "agentworkspace.dev/1.0",
     },
     cache: "no-store",
   });

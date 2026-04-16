@@ -65,13 +65,14 @@ export function WorkspaceSurface({ workspaceSlug }: { workspaceSlug: string }) {
         <section className="mt-8 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="space-y-5">
             <div className="glass-panel p-6">
-              <p className="section-label">Template reminder</p>
+              <p className="section-label">Preview surface</p>
               <h2 className="mt-3 text-2xl font-semibold text-slate-900">
-                This page is intentionally generic.
+                This page is intentionally generic by design.
               </h2>
               <p className="mt-3 text-sm leading-6 text-slate-600">
-                Replace the summary cards, workflows, and domain nouns only after you lock your
-                schema, brief packet, tool registry, and answer packet shape.
+                Treat this as a live studio route for testing your future domain harness. Replace
+                the summary cards, workflows, and nouns only after you lock your schema, brief
+                packet, tool registry, and answer packet shape.
               </p>
             </div>
 
@@ -91,7 +92,7 @@ export function WorkspaceSurface({ workspaceSlug }: { workspaceSlug: string }) {
             </div>
 
             <div className="panel-strong p-6">
-              <p className="section-label">Starter checklist</p>
+              <p className="section-label">Adaptation checklist</p>
               <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
                 <li>Rewrite the schema around your domain entities.</li>
                 <li>Seed realistic synthetic records and sample uploads.</li>

@@ -3,15 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --bg: #ffffff;
-  --bg-accent: #f9fafb;
-  --panel: #ffffff;
-  --line: #e5e7eb;
+  --bg: #fffaf4;
+  --bg-accent: #fff4e5;
+  --panel: rgba(255, 255, 255, 0.86);
+  --line: rgba(72, 57, 39, 0.12);
   --text: #111827;
-  --muted: #6b7280;
-  --brand: #5b5bd6;
-  --brand-deep: #4338ca;
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --muted: #677184;
+  --brand: #111827;
+  --brand-deep: #020617;
+  --shadow: 0 18px 40px rgba(33, 27, 20, 0.06);
 }
 
 @layer base {
@@ -28,7 +28,9 @@
     color: var(--text);
     font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     min-height: 100vh;
-    background: var(--bg);
+    background:
+      radial-gradient(circle at top, rgba(255, 234, 208, 0.72), transparent 26%),
+      linear-gradient(180deg, #fffaf4 0%, #fffdf8 22%, #fffaf4 100%);
     -webkit-font-smoothing: antialiased;
   }
 
@@ -48,30 +50,31 @@
 
 @layer components {
   .app-shell {
-    @apply min-h-screen bg-white;
+    @apply min-h-screen;
   }
 
   .app-frame {
-    @apply mx-auto max-w-[1400px] px-4 py-3 sm:px-5;
+    @apply mx-auto max-w-[1400px] px-4 py-6 sm:px-5;
   }
 
   .glass-panel {
     background: var(--panel);
     border: 1px solid var(--line);
     box-shadow: var(--shadow);
-    @apply rounded-xl;
+    backdrop-filter: blur(14px);
+    @apply rounded-[28px];
   }
 
   .panel-strong {
-    background: var(--panel);
+    background: rgba(255, 255, 255, 0.9);
     border: 1px solid var(--line);
-    @apply rounded-lg;
+    @apply rounded-[24px];
   }
 
   .metric-tile {
     background: var(--bg-accent);
     border: 1px solid var(--line);
-    @apply rounded-lg p-3;
+    @apply rounded-[22px] p-4;
   }
 
   .section-label {
@@ -79,15 +82,15 @@
   }
 
   .field-input {
-    @apply w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm outline-none transition;
+    @apply w-full rounded-[16px] border border-[rgba(72,57,39,0.12)] bg-white px-3 py-2 text-sm outline-none transition;
   }
 
   .field-input:focus {
-    @apply border-indigo-400 ring-2 ring-indigo-100;
+    @apply border-slate-400 ring-2 ring-slate-100;
   }
 
   .btn-primary {
-    @apply rounded-lg bg-indigo-600 px-3.5 py-2 text-sm font-medium text-white transition hover:bg-indigo-700;
+    @apply rounded-full bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800;
   }
 
   .btn-primary:disabled {
@@ -95,7 +98,72 @@
   }
 
   .btn-secondary {
-    @apply rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50;
+    @apply rounded-full border border-[rgba(72,57,39,0.12)] bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50;
+  }
+
+  .directory-hero {
+    @apply rounded-[32px] border border-[rgba(72,57,39,0.12)] px-6 py-7 shadow-[0_24px_48px_rgba(33,27,20,0.07)] sm:px-8 sm:py-8;
+    background:
+      radial-gradient(circle at top right, rgba(210, 246, 240, 0.85), transparent 28%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 252, 248, 0.88) 100%);
+  }
+
+  .directory-metric {
+    @apply rounded-[22px] border border-[rgba(72,57,39,0.12)] bg-white/90 px-4 py-4;
+  }
+
+  .directory-filter-panel {
+    @apply rounded-[28px] border border-[rgba(72,57,39,0.12)] bg-white/90 px-5 py-5 shadow-[0_20px_40px_rgba(33,27,20,0.05)];
+    backdrop-filter: blur(12px);
+  }
+
+  .directory-chip {
+    @apply rounded-full border border-[rgba(72,57,39,0.12)] bg-white px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-50;
+  }
+
+  .directory-chip-active {
+    @apply bg-slate-950 text-white hover:bg-slate-950;
+  }
+
+  .directory-category-row {
+    @apply flex w-full items-center justify-between rounded-[16px] px-3 py-2 text-left text-sm text-slate-600 transition hover:bg-slate-50 hover:text-slate-950;
+  }
+
+  .directory-category-row-active {
+    @apply bg-slate-950 text-white hover:bg-slate-950 hover:text-white;
+  }
+
+  .directory-pill {
+    @apply rounded-full border border-[rgba(72,57,39,0.12)] bg-white/90 px-3 py-1.5 text-sm text-slate-600;
+  }
+
+  .directory-pill-small {
+    @apply px-2.5 py-1 text-xs;
+  }
+
+  .pack-card {
+    @apply overflow-hidden rounded-[26px] border border-[rgba(72,57,39,0.12)] bg-white shadow-[0_18px_35px_rgba(33,27,20,0.05)] transition;
+  }
+
+  .pack-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 22px 42px rgba(33, 27, 20, 0.08);
+  }
+
+  .pack-card-featured {
+    @apply bg-white/95;
+  }
+
+  .pack-card-hero {
+    @apply relative h-36 w-full;
+  }
+
+  .pack-trust-badge {
+    @apply absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1 text-xs font-medium text-slate-700;
+  }
+
+  .directory-code-block {
+    @apply overflow-x-auto rounded-[22px] border border-[rgba(72,57,39,0.12)] bg-[rgba(14,23,38,0.96)] p-4 text-[12.5px] leading-6 text-slate-100;
   }
 
   .assistant-markdown {

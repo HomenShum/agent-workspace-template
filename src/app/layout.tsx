@@ -1,24 +1,25 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import { OperatorSessionProvider } from "@/components/OperatorSessionProvider";
 import { Sidebar } from "@/components/Sidebar";
 
-const sans = Inter({
+const sans = Geist({
   subsets: ["latin"],
   variable: "--font-sans",
 });
 
-const mono = JetBrains_Mono({
+const mono = Geist_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
   variable: "--font-mono",
 });
 
 export const metadata: Metadata = {
-  title: "Agent Workspace Template",
-  description: "A reusable Convex + Next.js agent workspace with durable streaming and operator rail UX.",
+  title: "agentworkspace.dev",
+  description:
+    "A components-style directory for natural-language agent harness packs, backed by the Agent Workspace template runtime.",
 };
 
 export default function RootLayout({
@@ -32,7 +33,7 @@ export default function RootLayout({
         <ConvexClientProvider>
           <OperatorSessionProvider>
             <Sidebar />
-            <div className="ml-0 md:ml-[220px]">{children}</div>
+            {children}
           </OperatorSessionProvider>
         </ConvexClientProvider>
       </body>

@@ -13,6 +13,7 @@ export const seedTemplate = mutation({
       "evalCases",
       "evalRuns",
       "answerPackets",
+      "packSubmissions",
       "messageEvents",
       "messages",
       "files",
@@ -25,12 +26,12 @@ export const seedTemplate = mutation({
     await ctx.db.insert("workspaces", {
       workspaceId: "WS-001",
       slug: "workspace-a",
-      label: "Workspace A",
-      eyebrow: "Example persona workspace",
-      headline: "A placeholder workspace for your first real domain persona.",
+      label: "Builder Preview",
+      eyebrow: "Studio preview workspace",
+      headline: "A builder-facing preview surface for your first real domain persona.",
       description:
-        "Use this route as the starting point for a domain-native workspace page after you replace the schema, brief, and tool contract.",
-      primaryPersona: "Persona A",
+        "Use this route as the starting point for a domain-native builder or operator workspace after you replace the schema, brief, and tool contract.",
+      primaryPersona: "Builder / Operator",
       samplePrompts: [
         "What should I investigate first here?",
         "Summarize the current workspace state.",
@@ -41,12 +42,12 @@ export const seedTemplate = mutation({
     await ctx.db.insert("workspaces", {
       workspaceId: "WS-002",
       slug: "workspace-b",
-      label: "Workspace B",
-      eyebrow: "Second example persona",
-      headline: "A second route for another role, team, or decision surface.",
+      label: "Reviewer Preview",
+      eyebrow: "Secondary preview workspace",
+      headline: "A reviewer-facing route for oversight, escalation, or aggregated scopes.",
       description:
         "Replace this with the secondary role or aggregated view in your domain, such as a portfolio, program, or regional perspective.",
-      primaryPersona: "Persona B",
+      primaryPersona: "Reviewer / Lead",
       samplePrompts: [
         "What patterns are emerging across this scope?",
         "Which item is highest priority?",

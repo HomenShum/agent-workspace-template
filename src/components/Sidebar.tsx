@@ -3,79 +3,100 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useQuery } from "convex/react";
-import { api } from "../../convex/_generated/api";
 import { useOperatorSession } from "@/components/OperatorSessionProvider";
 
 const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/workspace-a", label: "Workspace A" },
-  { href: "/workspace-b", label: "Workspace B" },
-  { href: "/chat", label: "Chat" },
+  { href: "/", label: "Directory" },
+  { href: "/submit", label: "Submit" },
+  { href: "/chat", label: "Studio Chat" },
+  { href: "/workspace-a", label: "Builder Preview" },
+  { href: "/workspace-b", label: "Reviewer Preview" },
 ];
 
 export function Sidebar() {
   return (
-    <Suspense fallback={<SidebarFallback />}>
-      <SidebarInner />
+    <Suspense fallback={<HeaderFallback />}>
+      <HeaderInner />
     </Suspense>
   );
 }
 
-function SidebarFallback() {
+function HeaderFallback() {
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-screen w-[220px] flex-col border-r border-gray-200 bg-white">
-      <div className="px-4 py-4">
-        <p className="text-[13px] font-bold text-gray-900">Agent Workspace</p>
+    <header className="sticky top-0 z-40 border-b border-[rgba(72,57,39,0.12)] bg-[rgba(255,250,244,0.92)] backdrop-blur">
+      <div className="mx-auto flex max-w-[1400px] items-center justify-between px-4 py-3 sm:px-5">
+        <Link href="/" className="text-base font-semibold tracking-[-0.03em] text-slate-950">
+          agentworkspace.dev
+        </Link>
       </div>
-    </aside>
+    </header>
   );
 }
 
-function SidebarInner() {
+function HeaderInner() {
   const pathname = usePathname();
   const { operator } = useOperatorSession();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const workspaces = useQuery(api.workspaces.list, {});
 
   return (
-    <>
-      <button
-        type="button"
-        onClick={() => setMobileOpen(true)}
-        className="fixed left-3 top-3 z-50 rounded-md border border-gray-200 bg-white p-2 shadow-sm md:hidden"
-        aria-label="Open menu"
-      >
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-          <path d="M3 5h14M3 10h14M3 15h14" />
-        </svg>
-      </button>
-
-      {mobileOpen ? (
-        <div className="fixed inset-0 z-40 bg-black/30 md:hidden" onClick={() => setMobileOpen(false)} />
-      ) : null}
-
-      <aside
-        className={`fixed left-0 top-0 z-40 flex h-screen w-[220px] flex-col border-r border-gray-200 bg-white transition-transform duration-200 ${
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0`}
-      >
-        <div className="flex items-center justify-between px-4 py-4">
-          <p className="text-[13px] font-bold text-gray-900">Agent Workspace</p>
-          <button
-            type="button"
-            onClick={() => setMobileOpen(false)}
-            className="rounded p-1 text-gray-400 hover:text-gray-600 md:hidden"
-            aria-label="Close menu"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-              <path d="M4 4l8 8M12 4l-8 8" />
-            </svg>
-          </button>
+    <header className="sticky top-0 z-40 border-b border-[rgba(72,57,39,0.12)] bg-[rgba(255,250,244,0.92)] backdrop-blur">
+      <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-4 py-3 sm:px-5">
+        <div className="flex items-center gap-5">
+          <Link href="/" className="text-base font-semibold tracking-[-0.03em] text-slate-950">
+            agentworkspace.dev
+          </Link>
+          <nav className="hidden items-center gap-1 md:flex">
+            {navLinks.map((link) => {
+              const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`rounded-full px-3 py-2 text-sm font-medium transition ${
+                    isActive
+                      ? "bg-slate-950 text-white"
+                      : "text-slate-600 hover:bg-white hover:text-slate-950"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+          </nav>
         </div>
 
-        <nav className="flex-1 px-2">
-          <div className="space-y-0.5">
+        <div className="hidden items-center gap-3 md:flex">
+          <a
+            href="https://github.com/HomenShum/agent-workspace-template"
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-full border border-[rgba(72,57,39,0.12)] bg-white px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50"
+          >
+            GitHub
+          </a>
+          <div className="rounded-full border border-[rgba(72,57,39,0.12)] bg-white px-3 py-2 text-xs text-slate-600">
+            {operator ? (
+              <>
+                Active: <span className="font-semibold text-slate-950">{operator.name}</span>
+              </>
+            ) : (
+              "No operator selected"
+            )}
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setMobileOpen((current) => !current)}
+          className="rounded-full border border-[rgba(72,57,39,0.12)] bg-white px-3 py-2 text-sm text-slate-700 md:hidden"
+        >
+          Menu
+        </button>
+      </div>
+
+      {mobileOpen ? (
+        <div className="border-t border-[rgba(72,57,39,0.12)] bg-[rgba(255,250,244,0.98)] px-4 py-3 md:hidden">
+          <div className="space-y-2">
             {navLinks.map((link) => {
               const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
               return (
@@ -83,53 +104,25 @@ function SidebarInner() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className={`block rounded-md px-3 py-1.5 text-[13px] font-medium transition ${
-                    isActive
-                      ? "bg-indigo-50 text-indigo-600"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  className={`block rounded-xl px-3 py-2 text-sm font-medium ${
+                    isActive ? "bg-slate-950 text-white" : "bg-white text-slate-700"
                   }`}
                 >
                   {link.label}
                 </Link>
               );
             })}
+            <a
+              href="https://github.com/HomenShum/agent-workspace-template"
+              target="_blank"
+              rel="noreferrer"
+              className="block rounded-xl bg-white px-3 py-2 text-sm font-medium text-slate-700"
+            >
+              GitHub
+            </a>
           </div>
-
-          <div className="mt-6">
-            <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
-              Example workspaces
-            </p>
-            <div className="mt-2 space-y-0.5">
-              {(workspaces ?? []).map((workspace: any) => (
-                <Link
-                  key={workspace.workspaceId}
-                  href={`/${workspace.slug}`}
-                  onClick={() => setMobileOpen(false)}
-                  className={`flex items-center justify-between rounded-md px-3 py-1 text-[13px] transition ${
-                    pathname === `/${workspace.slug}`
-                      ? "bg-indigo-50 font-medium text-indigo-600"
-                      : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
-                  }`}
-                >
-                  <span>{workspace.label}</span>
-                  <span className="text-[11px] text-gray-400">{workspace.workspaceId}</span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </nav>
-
-        <div className="border-t border-gray-200 px-4 py-3">
-          {operator ? (
-            <>
-              <p className="truncate text-[13px] font-medium text-gray-900">{operator.name}</p>
-              <p className="text-[11px] text-gray-400">{operator.role.replace("_", " ")}</p>
-            </>
-          ) : (
-            <p className="text-[13px] text-gray-400">No active operator session</p>
-          )}
         </div>
-      </aside>
-    </>
+      ) : null}
+    </header>
   );
 }

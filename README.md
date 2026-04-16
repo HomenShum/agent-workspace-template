@@ -1,8 +1,16 @@
-# Agent Workspace Template
+# Agent Workspace
 
-`agent-workspace-template` is the reusable platform extracted from `FloorAI`.
+`agent-workspace-template` is now framed as `agentworkspace.dev`: a components-style directory and starter runtime for natural-language agent harness packs.
 
-It keeps the shared pieces that made the original project useful:
+The repo still contains the reusable platform extracted from `FloorAI`, but the product story is now simpler:
+
+- browse verified harness packs on the homepage
+- open detail pages with instructions, sources, and evaluation guidance
+- submit new harness packs into a lightweight review queue
+- use the built-in studio routes to preview the shared chat and right-side agent rail
+- adapt the underlying runtime into your own domain implementation
+
+It keeps the shared runtime pieces that made the original project useful:
 
 - centered shared chat plus expandable agent rail
 - durable Convex message streaming via `messageEvents`
@@ -16,14 +24,16 @@ It intentionally removes retail-specific domain logic. The expectation is that y
 - `CourseAI`
 - another operations or knowledge-work agent
 
-## What this template includes
+## What this repo includes
 
 ```text
 src/app/
-  /                 generic landing page
-  /chat             shared channel surface
-  /workspace-a      example persona workspace
-  /workspace-b      example persona workspace
+  /                 harness pack directory
+  /packs/[slug]     pack detail pages
+  /submit           submission form + review queue preview
+  /chat             shared channel studio
+  /workspace-a      builder preview workspace
+  /workspace-b      reviewer preview workspace
 
 src/components/
   ChatPanel         right-rail assistant UI
@@ -37,6 +47,7 @@ convex/
   schema.ts         generic runtime tables
   users.ts          operator lookup
   workspaces.ts     workspace registry
+  submissions.ts    harness pack submission queue
   access.ts         generic access helpers
   messages.ts       message + event persistence
   files.ts          upload metadata
@@ -47,7 +58,7 @@ convex/
   seed.ts           sample workspaces and operators
 ```
 
-## What this template does not include
+## What this repo does not include
 
 - domain entities such as `stores`, `leases`, or `courses`
 - domain tool registry for your real workflows
@@ -66,7 +77,15 @@ npm run seed
 
 Then set `NEXT_PUBLIC_CONVEX_URL` in `.env.local` using the local Convex URL printed by `convex dev`.
 
-## Adoption sequence
+## Recommended public URL
+
+If you deploy this repo as a public-facing product or internal catalog, the intended branding is:
+
+- `agentworkspace.dev`
+
+The GitHub repository stays `agent-workspace-template`, but the UI and metadata are shaped around that public-facing identity.
+
+## Adaptation sequence
 
 Do not start by editing the large agent file. Lock these in order:
 
@@ -90,7 +109,7 @@ The template agent is intentionally lightweight:
 
 That means the repo boots cleanly as a workspace scaffold before you add your own domain retrieval or evaluation logic.
 
-## Recommended next steps after cloning this template
+## Recommended next steps after cloning this repo
 
 ```text
 1. Rename workspace-a / workspace-b to real personas
@@ -101,7 +120,7 @@ That means the repo boots cleanly as a workspace scaffold before you add your ow
 6. Rewrite README, slides, and demo video for the new domain
 ```
 
-## Related reference
+## Related references
 
 If you are coming from the `FloorAI` repo, the original extraction notes live there in:
 

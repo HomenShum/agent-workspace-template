@@ -25,6 +25,30 @@ export default defineSchema({
     .index("by_workspaceId", ["workspaceId"])
     .index("by_slug", ["slug"]),
 
+  packSubmissions: defineTable({
+    submissionId: v.string(),
+    operatorId: v.string(),
+    submitterName: v.string(),
+    submitterEmail: v.string(),
+    packName: v.string(),
+    slug: v.string(),
+    tagline: v.string(),
+    summary: v.string(),
+    category: v.string(),
+    compatibility: v.array(v.string()),
+    repoUrl: v.optional(v.string()),
+    docsUrl: v.optional(v.string()),
+    whyItMatters: v.string(),
+    sourceNotes: v.string(),
+    status: v.string(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_submissionId", ["submissionId"])
+    .index("by_status", ["status"])
+    .index("by_createdAt", ["createdAt"])
+    .index("by_operatorId", ["operatorId"]),
+
   messages: defineTable({
     role: v.string(),
     content: v.string(),
