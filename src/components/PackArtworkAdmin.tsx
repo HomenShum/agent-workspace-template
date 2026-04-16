@@ -48,9 +48,9 @@ export function PackArtworkAdmin({ pack }: { pack: HarnessPack }) {
       <p className="section-label">Gemini cover art</p>
       <div className="mt-3 space-y-3">
         <p className="text-sm leading-6 text-slate-600">
-          Generate and persist a refreshed cover image through Convex storage using Gemini image
-          generation. This updates the local review artifact even when the public site is still
-          serving the checked-in fallback cover.
+          Generate and persist a raster cover experiment through Convex storage using Gemini image
+          generation. The public catalog is SVG-first, so this is an internal exploration tool, not
+          the default visual path for the marketplace.
         </p>
         <div className="rounded-[18px] border border-[rgba(72,57,39,0.12)] bg-white px-4 py-4 text-sm text-slate-700">
           <p>

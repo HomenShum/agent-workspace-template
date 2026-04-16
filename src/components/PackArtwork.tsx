@@ -1,5 +1,10 @@
 import type { ArtworkVariant } from "@/lib/pack-art-types";
 
+const SIGNAL = "#122033";
+const LINE = "rgba(18, 32, 51, 0.16)";
+const PANEL = "rgba(255,255,255,0.76)";
+const PANEL_SOFT = "rgba(255,255,255,0.58)";
+
 export function PackArtwork({
   variant,
   compact = false,
@@ -7,158 +12,257 @@ export function PackArtwork({
   variant: ArtworkVariant;
   compact?: boolean;
 }) {
-  const viewBox = compact ? "0 0 320 180" : "0 0 640 320";
-  const stroke = "rgba(30, 41, 59, 0.18)";
-  const node = "rgba(15, 23, 42, 0.82)";
-  const soft = "rgba(255,255,255,0.88)";
+  const width = compact ? 320 : 640;
+  const height = compact ? 180 : 320;
+  const scale = compact ? 0.5 : 1;
 
   return (
     <div className={`pack-art-shell ${compact ? "pack-art-shell-compact" : ""}`}>
-      <svg viewBox={viewBox} className="pack-art-svg" role="img" aria-hidden="true">
+      <svg viewBox={`0 0 ${width} ${height}`} className="pack-art-svg" role="img" aria-hidden="true">
         <defs>
-          <linearGradient id={`panel-${variant}`} x1="0" x2="1" y1="0" y2="1">
+          <linearGradient id={`bg-${variant}`} x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stopColor="rgba(255,255,255,0.92)" />
+            <stop offset="52%" stopColor="rgba(255,248,240,0.72)" />
+            <stop offset="100%" stopColor="rgba(229,244,241,0.7)" />
+          </linearGradient>
+          <linearGradient id={`card-${variant}`} x1="0" x2="1" y1="0" y2="1">
             <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0.55)" />
+            <stop offset="100%" stopColor="rgba(255,255,255,0.62)" />
           </linearGradient>
-          <linearGradient id={`signal-${variant}`} x1="0" x2="1" y1="0" y2="0">
-            <stop offset="0%" stopColor="rgba(15,23,42,0.15)" />
-            <stop offset="100%" stopColor="rgba(15,23,42,0.55)" />
+          <linearGradient id={`accent-${variant}`} x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stopColor="rgba(23,37,84,0.82)" />
+            <stop offset="100%" stopColor="rgba(13,148,136,0.72)" />
           </linearGradient>
+          <linearGradient id={`soft-accent-${variant}`} x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stopColor="rgba(14,165,233,0.16)" />
+            <stop offset="100%" stopColor="rgba(245,158,11,0.14)" />
+          </linearGradient>
+          <filter id={`blur-${variant}`}>
+            <feGaussianBlur stdDeviation={compact ? 18 : 26} />
+          </filter>
+          <pattern id={`grid-${variant}`} width={compact ? 20 : 28} height={compact ? 20 : 28} patternUnits="userSpaceOnUse">
+            <path d={`M ${compact ? 20 : 28} 0 L 0 0 0 ${compact ? 20 : 28}`} fill="none" stroke="rgba(18,32,51,0.05)" strokeWidth="1" />
+          </pattern>
         </defs>
-        {variant === "directory" ? (
-          <>
-            <rect x="42" y="52" width="182" height="110" rx="26" fill={soft} stroke={stroke} />
-            <rect x="247" y="88" width="156" height="86" rx="24" fill="rgba(255,255,255,0.7)" stroke={stroke} />
-            <rect x="430" y="46" width="154" height="126" rx="30" fill="url(#panel-directory)" stroke={stroke} />
-            <path
-              d="M119 196C170 162 197 156 255 162C313 168 347 208 398 208C452 208 480 170 540 148"
-              fill="none"
-              stroke="url(#signal-directory)"
-              strokeWidth="10"
-              strokeLinecap="round"
-            />
-            <circle cx="119" cy="196" r="12" fill={node} />
-            <circle cx="255" cy="162" r="12" fill={node} />
-            <circle cx="398" cy="208" r="12" fill={node} />
-            <circle cx="540" cy="148" r="12" fill={node} />
-            <rect x="72" y="80" width="124" height="16" rx="8" fill="rgba(15,23,42,0.1)" />
-            <rect x="72" y="108" width="102" height="14" rx="7" fill="rgba(15,23,42,0.08)" />
-            <rect x="266" y="112" width="88" height="14" rx="7" fill="rgba(15,23,42,0.1)" />
-            <rect x="266" y="138" width="110" height="14" rx="7" fill="rgba(15,23,42,0.08)" />
-            <rect x="456" y="76" width="104" height="16" rx="8" fill="rgba(15,23,42,0.1)" />
-            <rect x="456" y="106" width="86" height="14" rx="7" fill="rgba(15,23,42,0.08)" />
-          </>
-        ) : null}
-        {variant === "grounded-operator-rail" ? (
-          <>
-            <rect x="34" y="36" width="248" height="112" rx="28" fill={soft} stroke={stroke} />
-            <rect x="304" y="26" width="120" height="220" rx="32" fill="url(#panel-grounded-operator-rail)" stroke={stroke} />
-            <rect x="444" y="68" width="156" height="150" rx="30" fill="rgba(255,255,255,0.72)" stroke={stroke} />
-            <path d="M282 92H304" stroke={node} strokeWidth="6" strokeLinecap="round" />
-            <path d="M424 128H444" stroke={node} strokeWidth="6" strokeLinecap="round" />
-            <circle cx="292" cy="92" r="11" fill={node} />
-            <circle cx="434" cy="128" r="11" fill={node} />
-            <rect x="64" y="64" width="138" height="16" rx="8" fill="rgba(15,23,42,0.1)" />
-            <rect x="64" y="94" width="168" height="14" rx="7" fill="rgba(15,23,42,0.08)" />
-            <rect x="64" y="120" width="104" height="14" rx="7" fill="rgba(15,23,42,0.08)" />
-            <rect x="332" y="58" width="64" height="12" rx="6" fill="rgba(15,23,42,0.1)" />
-            <rect x="332" y="90" width="60" height="56" rx="18" fill="rgba(255,255,255,0.86)" stroke={stroke} />
-            <rect x="332" y="156" width="62" height="56" rx="18" fill="rgba(255,255,255,0.86)" stroke={stroke} />
-            <rect x="474" y="96" width="94" height="14" rx="7" fill="rgba(15,23,42,0.1)" />
-            <rect x="474" y="124" width="76" height="14" rx="7" fill="rgba(15,23,42,0.08)" />
-            <rect x="474" y="152" width="104" height="14" rx="7" fill="rgba(15,23,42,0.08)" />
-          </>
-        ) : null}
-        {variant === "planner-workers-synthesizer" ? (
-          <>
-            <rect x="258" y="28" width="124" height="62" rx="22" fill={soft} stroke={stroke} />
-            <rect x="86" y="134" width="132" height="74" rx="24" fill="rgba(255,255,255,0.72)" stroke={stroke} />
-            <rect x="252" y="134" width="132" height="74" rx="24" fill="rgba(255,255,255,0.72)" stroke={stroke} />
-            <rect x="418" y="134" width="132" height="74" rx="24" fill="rgba(255,255,255,0.72)" stroke={stroke} />
-            <rect x="236" y="248" width="168" height="46" rx="20" fill="url(#panel-planner-workers-synthesizer)" stroke={stroke} />
-            <path d="M320 90V118" stroke={node} strokeWidth="6" strokeLinecap="round" />
-            <path d="M320 118L152 134" stroke={node} strokeWidth="4" strokeLinecap="round" />
-            <path d="M320 118L318 134" stroke={node} strokeWidth="4" strokeLinecap="round" />
-            <path d="M320 118L484 134" stroke={node} strokeWidth="4" strokeLinecap="round" />
-            <path d="M152 208L320 248" stroke={node} strokeWidth="4" strokeLinecap="round" />
-            <path d="M318 208L320 248" stroke={node} strokeWidth="4" strokeLinecap="round" />
-            <path d="M484 208L320 248" stroke={node} strokeWidth="4" strokeLinecap="round" />
-            <circle cx="320" cy="118" r="11" fill={node} />
-            <circle cx="152" cy="208" r="11" fill={node} />
-            <circle cx="318" cy="208" r="11" fill={node} />
-            <circle cx="484" cy="208" r="11" fill={node} />
-          </>
-        ) : null}
-        {variant === "answer-packets-quality-gates" ? (
-          <>
-            <rect x="76" y="46" width="184" height="214" rx="30" fill={soft} stroke={stroke} />
-            <rect x="286" y="74" width="130" height="80" rx="24" fill="rgba(255,255,255,0.72)" stroke={stroke} />
-            <rect x="440" y="74" width="130" height="80" rx="24" fill="rgba(255,255,255,0.72)" stroke={stroke} />
-            <rect x="286" y="178" width="284" height="82" rx="28" fill="url(#panel-answer-packets-quality-gates)" stroke={stroke} />
-            <path d="M122 96H214" stroke="rgba(15,23,42,0.12)" strokeWidth="14" strokeLinecap="round" />
-            <path d="M122 126H224" stroke="rgba(15,23,42,0.08)" strokeWidth="10" strokeLinecap="round" />
-            <path d="M122 154H204" stroke="rgba(15,23,42,0.08)" strokeWidth="10" strokeLinecap="round" />
-            <path d="M328 118L348 138L378 106" fill="none" stroke={node} strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M486 114H532" stroke={node} strokeWidth="8" strokeLinecap="round" />
-            <path d="M486 136H516" stroke={node} strokeWidth="8" strokeLinecap="round" />
-            <path d="M326 220H530" stroke="rgba(15,23,42,0.12)" strokeWidth="14" strokeLinecap="round" />
-            <path d="M326 248H484" stroke="rgba(15,23,42,0.08)" strokeWidth="10" strokeLinecap="round" />
-          </>
-        ) : null}
-        {variant === "elicitation-first-operating-system" ? (
-          <>
-            <rect x="64" y="74" width="194" height="172" rx="32" fill={soft} stroke={stroke} />
-            <rect x="228" y="42" width="176" height="118" rx="28" fill="rgba(255,255,255,0.74)" stroke={stroke} />
-            <rect x="388" y="120" width="188" height="132" rx="30" fill="url(#panel-elicitation-first-operating-system)" stroke={stroke} />
-            <path d="M258 162L388 162" stroke={node} strokeWidth="5" strokeLinecap="round" />
-            <circle cx="258" cy="162" r="11" fill={node} />
-            <circle cx="388" cy="162" r="11" fill={node} />
-            <path d="M112 110H210" stroke="rgba(15,23,42,0.1)" strokeWidth="12" strokeLinecap="round" />
-            <path d="M112 138H194" stroke="rgba(15,23,42,0.08)" strokeWidth="10" strokeLinecap="round" />
-            <path d="M260 78H336" stroke="rgba(15,23,42,0.1)" strokeWidth="12" strokeLinecap="round" />
-            <path d="M260 108H352" stroke="rgba(15,23,42,0.08)" strokeWidth="10" strokeLinecap="round" />
-            <path d="M424 154H528" stroke="rgba(15,23,42,0.12)" strokeWidth="14" strokeLinecap="round" />
-            <path d="M424 184H502" stroke="rgba(15,23,42,0.08)" strokeWidth="10" strokeLinecap="round" />
-          </>
-        ) : null}
-        {variant === "deterministic-plus-llm-hybrid" ? (
-          <>
-            <rect x="72" y="58" width="214" height="182" rx="32" fill={soft} stroke={stroke} />
-            <rect x="350" y="58" width="214" height="182" rx="32" fill="url(#panel-deterministic-plus-llm-hybrid)" stroke={stroke} />
-            <path d="M318 48V250" stroke={node} strokeWidth="8" strokeLinecap="round" strokeDasharray="12 14" />
-            <path d="M112 104H214" stroke="rgba(15,23,42,0.12)" strokeWidth="14" strokeLinecap="round" />
-            <path d="M112 136H228" stroke="rgba(15,23,42,0.08)" strokeWidth="10" strokeLinecap="round" />
-            <path d="M112 168H194" stroke="rgba(15,23,42,0.08)" strokeWidth="10" strokeLinecap="round" />
-            <circle cx="168" cy="206" r="26" fill="rgba(15,23,42,0.82)" />
-            <path d="M392 116C432 82 502 82 540 118C578 154 576 210 518 220C462 230 404 196 392 116Z" fill="rgba(255,255,255,0.7)" stroke={stroke} />
-            <path d="M430 146H516" stroke={node} strokeWidth="8" strokeLinecap="round" />
-            <path d="M430 174H486" stroke={node} strokeWidth="8" strokeLinecap="round" />
-          </>
-        ) : null}
-        {variant === "durable-streaming-events" ? (
-          <>
-            <rect x="54" y="58" width="532" height="170" rx="36" fill={soft} stroke={stroke} />
-            <path
-              d="M98 172C126 172 126 112 154 112C182 112 182 202 210 202C238 202 238 92 266 92C294 92 294 186 322 186C350 186 350 128 378 128C406 128 406 160 434 160C462 160 462 102 490 102C518 102 518 148 546 148"
-              fill="none"
-              stroke="url(#signal-durable-streaming-events)"
-              strokeWidth="12"
-              strokeLinecap="round"
-            />
-            {[154, 210, 266, 322, 378, 434, 490, 546].map((x, index) => (
-              <circle
-                key={`${x}-${index}`}
-                cx={x}
-                cy={[112, 202, 92, 186, 128, 160, 102, 148][index]}
-                r="13"
-                fill={node}
-              />
-            ))}
-            <rect x="108" y="84" width="96" height="14" rx="7" fill="rgba(15,23,42,0.08)" />
-            <rect x="438" y="188" width="98" height="14" rx="7" fill="rgba(15,23,42,0.08)" />
-          </>
-        ) : null}
+
+        <rect width={width} height={height} rx={compact ? 24 : 36} fill={`url(#bg-${variant})`} />
+        <rect width={width} height={height} rx={compact ? 24 : 36} fill={`url(#grid-${variant})`} />
+
+        <circle
+          cx={compact ? 72 : 154}
+          cy={compact ? 52 : 88}
+          r={compact ? 44 : 92}
+          fill="rgba(255, 206, 150, 0.42)"
+          filter={`url(#blur-${variant})`}
+        />
+        <circle
+          cx={compact ? 254 : 510}
+          cy={compact ? 136 : 250}
+          r={compact ? 58 : 116}
+          fill="rgba(129, 230, 217, 0.2)"
+          filter={`url(#blur-${variant})`}
+        />
+
+        <rect
+          x={compact ? 14 : 24}
+          y={compact ? 14 : 24}
+          width={width - (compact ? 28 : 48)}
+          height={height - (compact ? 28 : 48)}
+          rx={compact ? 20 : 30}
+          fill="rgba(255,255,255,0.42)"
+          stroke="rgba(255,255,255,0.58)"
+        />
+
+        <g transform={`scale(${scale})`}>
+          {variant === "directory" ? <DirectoryArtwork /> : null}
+          {variant === "grounded-operator-rail" ? <GroundedOperatorRailArtwork /> : null}
+          {variant === "planner-workers-synthesizer" ? <PlannerWorkersSynthesizerArtwork /> : null}
+          {variant === "answer-packets-quality-gates" ? <AnswerPacketsArtwork /> : null}
+          {variant === "elicitation-first-operating-system" ? <ElicitationArtwork /> : null}
+          {variant === "deterministic-plus-llm-hybrid" ? <HybridArtwork /> : null}
+          {variant === "durable-streaming-events" ? <StreamingArtwork /> : null}
+        </g>
       </svg>
     </div>
+  );
+}
+
+function Frame({ x, y, width, height, radius }: { x: number; y: number; width: number; height: number; radius: number }) {
+  return <rect x={x} y={y} width={width} height={height} rx={radius} fill={PANEL} stroke={LINE} />;
+}
+
+function SoftFrame({ x, y, width, height, radius }: { x: number; y: number; width: number; height: number; radius: number }) {
+  return <rect x={x} y={y} width={width} height={height} rx={radius} fill={PANEL_SOFT} stroke={LINE} />;
+}
+
+function Bar({ x, y, width, opacity = 0.12 }: { x: number; y: number; width: number; opacity?: number }) {
+  return <rect x={x} y={y} width={width} height={12} rx={6} fill={`rgba(18,32,51,${opacity})`} />;
+}
+
+function Node({ cx, cy, radius = 10, fill = SIGNAL }: { cx: number; cy: number; radius?: number; fill?: string }) {
+  return <circle cx={cx} cy={cy} r={radius} fill={fill} />;
+}
+
+function DirectoryArtwork() {
+  return (
+    <>
+      <Frame x={54} y={58} width={194} height={122} radius={30} />
+      <SoftFrame x={272} y={94} width={140} height={96} radius={26} />
+      <Frame x={430} y={48} width={154} height={170} radius={34} />
+      <Bar x={82} y={88} width={118} />
+      <Bar x={82} y={114} width={146} opacity={0.09} />
+      <Bar x={82} y={140} width={96} opacity={0.08} />
+      <Bar x={298} y={122} width={82} />
+      <Bar x={298} y={148} width={102} opacity={0.09} />
+      <Bar x={456} y={82} width={94} />
+      <Bar x={456} y={110} width={72} opacity={0.09} />
+      <Bar x={456} y={138} width={108} opacity={0.08} />
+      <path
+        d="M118 216C170 180 208 176 262 182C318 188 352 222 406 222C464 222 494 184 548 160"
+        fill="none"
+        stroke="url(#accent-directory)"
+        strokeWidth={11}
+        strokeLinecap="round"
+      />
+      <Node cx={118} cy={216} radius={11} />
+      <Node cx={262} cy={182} radius={11} />
+      <Node cx={406} cy={222} radius={11} />
+      <Node cx={548} cy={160} radius={11} />
+    </>
+  );
+}
+
+function GroundedOperatorRailArtwork() {
+  return (
+    <>
+      <Frame x={42} y={52} width={248} height={126} radius={30} />
+      <Frame x={308} y={34} width={126} height={226} radius={34} />
+      <SoftFrame x={452} y={84} width={150} height={154} radius={30} />
+      <Bar x={70} y={82} width={146} />
+      <Bar x={70} y={110} width={170} opacity={0.09} />
+      <Bar x={70} y={138} width={114} opacity={0.08} />
+      <Bar x={334} y={66} width={68} />
+      <rect x={334} y={100} width={72} height={54} rx={18} fill="rgba(255,255,255,0.84)" stroke={LINE} />
+      <rect x={334} y={166} width={72} height={54} rx={18} fill="rgba(255,255,255,0.84)" stroke={LINE} />
+      <Bar x={478} y={110} width={96} />
+      <Bar x={478} y={138} width={74} opacity={0.09} />
+      <Bar x={478} y={166} width={110} opacity={0.08} />
+      <path d="M290 102H308" stroke={SIGNAL} strokeWidth={6} strokeLinecap="round" />
+      <path d="M434 134H452" stroke={SIGNAL} strokeWidth={6} strokeLinecap="round" />
+      <Node cx={300} cy={102} radius={11} />
+      <Node cx={444} cy={134} radius={11} />
+    </>
+  );
+}
+
+function PlannerWorkersSynthesizerArtwork() {
+  return (
+    <>
+      <Frame x={254} y={34} width={132} height={64} radius={24} />
+      <SoftFrame x={90} y={144} width={132} height={82} radius={26} />
+      <SoftFrame x={254} y={144} width={132} height={82} radius={26} />
+      <SoftFrame x={418} y={144} width={132} height={82} radius={26} />
+      <Frame x={232} y={248} width={176} height={52} radius={22} />
+      <path d="M320 98V126" stroke={SIGNAL} strokeWidth={6} strokeLinecap="round" />
+      <path d="M320 126L156 144" stroke={SIGNAL} strokeWidth={4} strokeLinecap="round" />
+      <path d="M320 126L320 144" stroke={SIGNAL} strokeWidth={4} strokeLinecap="round" />
+      <path d="M320 126L484 144" stroke={SIGNAL} strokeWidth={4} strokeLinecap="round" />
+      <path d="M156 226L320 248" stroke={SIGNAL} strokeWidth={4} strokeLinecap="round" />
+      <path d="M320 226L320 248" stroke={SIGNAL} strokeWidth={4} strokeLinecap="round" />
+      <path d="M484 226L320 248" stroke={SIGNAL} strokeWidth={4} strokeLinecap="round" />
+      <Node cx={320} cy={126} radius={11} />
+      <Node cx={156} cy={226} radius={11} />
+      <Node cx={320} cy={226} radius={11} />
+      <Node cx={484} cy={226} radius={11} />
+      <Bar x={276} y={56} width={88} />
+      <Bar x={112} y={172} width={88} opacity={0.09} />
+      <Bar x={276} y={172} width={88} opacity={0.09} />
+      <Bar x={440} y={172} width={88} opacity={0.09} />
+      <Bar x={258} y={268} width={124} opacity={0.1} />
+    </>
+  );
+}
+
+function AnswerPacketsArtwork() {
+  return (
+    <>
+      <Frame x={72} y={52} width={188} height={216} radius={32} />
+      <SoftFrame x={288} y={78} width={132} height={84} radius={24} />
+      <SoftFrame x={442} y={78} width={132} height={84} radius={24} />
+      <Frame x={288} y={182} width={286} height={88} radius={28} />
+      <Bar x={112} y={100} width={112} />
+      <Bar x={112} y={130} width={122} opacity={0.09} />
+      <Bar x={112} y={158} width={96} opacity={0.08} />
+      <path d="M328 120L348 140L378 106" fill="none" stroke={SIGNAL} strokeWidth={8} strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M488 116H534" stroke={SIGNAL} strokeWidth={8} strokeLinecap="round" />
+      <path d="M488 140H518" stroke={SIGNAL} strokeWidth={8} strokeLinecap="round" />
+      <Bar x={324} y={216} width={214} />
+      <Bar x={324} y={244} width={166} opacity={0.09} />
+    </>
+  );
+}
+
+function ElicitationArtwork() {
+  return (
+    <>
+      <Frame x={70} y={78} width={190} height={172} radius={32} />
+      <SoftFrame x={232} y={42} width={178} height={122} radius={28} />
+      <Frame x={394} y={122} width={186} height={132} radius={30} />
+      <path d="M260 164L394 164" stroke={SIGNAL} strokeWidth={5} strokeLinecap="round" />
+      <Node cx={260} cy={164} radius={11} />
+      <Node cx={394} cy={164} radius={11} />
+      <Bar x={110} y={114} width={104} />
+      <Bar x={110} y={142} width={88} opacity={0.09} />
+      <Bar x={262} y={80} width={84} />
+      <Bar x={262} y={110} width={102} opacity={0.09} />
+      <Bar x={426} y={156} width={108} />
+      <Bar x={426} y={186} width={82} opacity={0.09} />
+    </>
+  );
+}
+
+function HybridArtwork() {
+  return (
+    <>
+      <Frame x={74} y={62} width={212} height={188} radius={32} />
+      <Frame x={354} y={62} width={212} height={188} radius={32} />
+      <path d="M320 48V262" stroke={SIGNAL} strokeWidth={8} strokeLinecap="round" strokeDasharray="12 14" opacity={0.9} />
+      <Bar x={112} y={108} width={108} />
+      <Bar x={112} y={140} width={122} opacity={0.09} />
+      <Bar x={112} y={170} width={92} opacity={0.08} />
+      <circle cx={170} cy={214} r={28} fill={SIGNAL} />
+      <path
+        d="M396 118C438 84 508 84 544 118C582 154 578 210 520 222C462 234 408 198 396 118Z"
+        fill="rgba(255,255,255,0.74)"
+        stroke={LINE}
+      />
+      <path d="M432 150H520" stroke={SIGNAL} strokeWidth={8} strokeLinecap="round" />
+      <path d="M432 178H490" stroke={SIGNAL} strokeWidth={8} strokeLinecap="round" />
+    </>
+  );
+}
+
+function StreamingArtwork() {
+  return (
+    <>
+      <Frame x={52} y={64} width={536} height={182} radius={36} />
+      <path
+        d="M96 184C122 184 128 118 154 118C182 118 184 214 212 214C240 214 242 96 270 96C298 96 300 194 328 194C356 194 360 136 388 136C416 136 418 170 446 170C474 170 476 108 504 108C532 108 534 156 560 156"
+        fill="none"
+        stroke="url(#accent-durable-streaming-events)"
+        strokeWidth={12}
+        strokeLinecap="round"
+      />
+      {[154, 212, 270, 328, 388, 446, 504, 560].map((x, index) => (
+        <Node
+          key={`${x}-${index}`}
+          cx={x}
+          cy={[118, 214, 96, 194, 136, 170, 108, 156][index]}
+          radius={13}
+        />
+      ))}
+      <Bar x={110} y={90} width={98} opacity={0.1} />
+      <Bar x={448} y={198} width={94} opacity={0.08} />
+    </>
   );
 }

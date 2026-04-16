@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CopyButton } from "@/components/CopyButton";
+import { PackArtwork } from "@/components/PackArtwork";
 import { PackArtworkAdmin } from "@/components/PackArtworkAdmin";
-import { PackVisual } from "@/components/PackVisual";
 import { getHarnessPack, harnessPacks } from "@/lib/harness-packs";
 
 export function generateStaticParams() {
@@ -30,7 +30,7 @@ export default async function PackDetailPage({
           <div className="space-y-8">
             <section className="glass-panel overflow-hidden">
               <div className="pack-detail-hero" style={{ background: pack.gradient }}>
-                <PackVisual slug={pack.slug} coverAssetPath={pack.coverAssetPath} />
+                <PackArtwork variant={pack.slug} />
               </div>
               <div className="space-y-6 px-6 py-7 sm:px-8">
                 <div className="flex flex-wrap items-center gap-2">

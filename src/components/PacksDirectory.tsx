@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { HarnessPack } from "@/lib/harness-packs";
 import { PackArtwork } from "@/components/PackArtwork";
-import { PackVisual } from "@/components/PackVisual";
 
 type SortMode = "featured" | "updated" | "name";
 type TrustMode = "all" | "Verified" | "Community";
@@ -220,7 +219,7 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
               {featuredPacks.map((pack) => (
                 <Link key={pack.slug} href={`/packs/${pack.slug}`} className="pack-card pack-card-featured">
                   <div className="pack-card-hero" style={{ background: pack.gradient }}>
-                    <PackVisual slug={pack.slug} coverAssetPath={pack.coverAssetPath} compact />
+                    <PackArtwork variant={pack.slug} compact />
                     <span className="pack-trust-badge">{pack.trust}</span>
                   </div>
                   <div className="space-y-3 p-5">
@@ -261,7 +260,7 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
               {filteredPacks.map((pack) => (
                 <Link key={pack.slug} href={`/packs/${pack.slug}`} className="pack-card">
                   <div className="pack-card-hero" style={{ background: pack.gradient }}>
-                    <PackVisual slug={pack.slug} coverAssetPath={pack.coverAssetPath} compact />
+                    <PackArtwork variant={pack.slug} compact />
                     <span className="pack-trust-badge">{pack.trust}</span>
                   </div>
                   <div className="space-y-3 p-5">
