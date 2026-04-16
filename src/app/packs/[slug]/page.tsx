@@ -42,14 +42,7 @@ export default async function PackDetailPage({
                   <h1 className="text-4xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-5xl">
                     {pack.name}
                   </h1>
-                  <p className="max-w-3xl text-lg leading-8 text-slate-600">{pack.summary}</p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {pack.compatibility.map((item) => (
-                    <span key={item} className="directory-pill">
-                      {item}
-                    </span>
-                  ))}
+                  <p className="max-w-3xl text-base leading-7 text-slate-600">{pack.summary}</p>
                 </div>
               </div>
               <div className="pack-detail-art" style={{ background: pack.gradient }}>
@@ -114,18 +107,23 @@ export default async function PackDetailPage({
               <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
                 Official docs and implementation references
               </h2>
-              <div className="mt-5 grid gap-4">
+              <div className="mt-5 grid gap-3">
                 {pack.sources.map((source) => (
                   <a
                     key={source.url}
                     href={source.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="rounded-[18px] border border-[rgba(72,57,39,0.12)] bg-white px-5 py-4 transition hover:-translate-y-[1px] hover:shadow-[0_16px_30px_rgba(33,27,20,0.08)]"
+                    className="directory-reference-row"
                   >
-                    <p className="text-sm font-semibold text-slate-950">{source.label}</p>
-                    <p className="mt-2 text-sm leading-6 text-slate-600">{source.note}</p>
-                    <span className="mt-3 inline-flex text-xs text-slate-500">{source.url}</span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-slate-950">{source.label}</p>
+                      <p className="mt-1 text-sm leading-6 text-slate-600">{source.note}</p>
+                      <span className="mt-2 inline-flex text-xs text-slate-500">{source.url}</span>
+                    </div>
+                    <span className="directory-reference-arrow" aria-hidden="true">
+                      Open
+                    </span>
                   </a>
                 ))}
               </div>
@@ -135,21 +133,12 @@ export default async function PackDetailPage({
           <aside className="space-y-5 xl:sticky xl:top-24 xl:self-start">
             <section className="glass-panel px-6 py-6">
               <p className="section-label">At a glance</p>
-              <div className="mt-4 grid gap-3">
+              <div className="mt-4 space-y-2">
                 {pack.metrics.map((metric) => (
-                  <div
-                    key={metric.label}
-                    className="rounded-[18px] border border-[rgba(72,57,39,0.12)] bg-white px-4 py-4"
-                  >
-                    <p className="section-label">{metric.label}</p>
-                    <p className="mt-2 text-base font-semibold text-slate-950">{metric.value}</p>
-                  </div>
+                  <MetadataRow key={metric.label} label={metric.label} value={metric.value} />
                 ))}
-                <div className="rounded-[18px] border border-[rgba(72,57,39,0.12)] bg-white px-4 py-4">
-                  <p className="section-label">Updated</p>
-                  <p className="mt-2 text-base font-semibold text-slate-950">{pack.updatedAt}</p>
-                </div>
-                <div className="rounded-[18px] border border-[rgba(72,57,39,0.12)] bg-white px-4 py-4">
+                <MetadataRow label="Updated" value={pack.updatedAt} />
+                <div className="directory-metadata-block">
                   <p className="section-label">Compatibility</p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {pack.compatibility.map((item) => (
@@ -164,7 +153,7 @@ export default async function PackDetailPage({
 
             <section className="glass-panel px-6 py-6">
               <p className="section-label">Links</p>
-              <div className="mt-4 grid gap-3">
+              <div className="mt-4 grid gap-2">
                 {pack.examples.map((example) =>
                   example.external ? (
                     <a
@@ -172,13 +161,15 @@ export default async function PackDetailPage({
                       href={example.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="btn-secondary text-center"
+                      className="directory-link-button"
                     >
-                      {example.label}
+                      <span>{example.label}</span>
+                      <span aria-hidden="true">Open</span>
                     </a>
                   ) : (
-                    <Link key={example.label} href={example.href} className="btn-secondary text-center">
-                      {example.label}
+                    <Link key={example.label} href={example.href} className="directory-link-button">
+                      <span>{example.label}</span>
+                      <span aria-hidden="true">Open</span>
                     </Link>
                   ),
                 )}
@@ -265,5 +256,14 @@ function InstructionPanel({
       </div>
       <pre className="directory-code-block mt-5">{body}</pre>
     </section>
+  );
+}
+
+function MetadataRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="directory-metadata-row">
+      <span className="section-label">{label}</span>
+      <span className="text-sm font-medium text-slate-900">{value}</span>
+    </div>
   );
 }
