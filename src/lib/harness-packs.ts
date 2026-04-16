@@ -40,6 +40,38 @@ export type HarnessPack = {
   examples: HarnessPackExample[];
 };
 
+export type PublisherProfile = {
+  name: string;
+  initials: string;
+  status: "Verified publisher" | "Community publisher";
+  description: string;
+  href: string;
+};
+
+export const publisherProfiles: Record<string, PublisherProfile> = {
+  "Agent Workspace": {
+    name: "Agent Workspace",
+    initials: "AW",
+    status: "Verified publisher",
+    description: "Core catalog publisher for the template runtime, UI patterns, and evaluation packs.",
+    href: "https://github.com/HomenShum/agent-workspace-template",
+  },
+  "Agent Workspace Labs": {
+    name: "Agent Workspace Labs",
+    initials: "AL",
+    status: "Verified publisher",
+    description: "Experimental orchestration and runtime patterns that are still source-backed and vetted.",
+    href: "https://github.com/HomenShum/agent-workspace-template",
+  },
+  "Open Workflow Lab": {
+    name: "Open Workflow Lab",
+    initials: "OW",
+    status: "Community publisher",
+    description: "Community-authored operating-system and workflow specification patterns.",
+    href: "https://github.com/HomenShum/agent-workspace-template",
+  },
+};
+
 export const harnessPacks: HarnessPack[] = [
   {
     slug: "grounded-operator-rail",
@@ -143,7 +175,7 @@ The final answer should remain readable by itself, but the rail must preserve en
     category: "Orchestration",
     trust: "Verified",
     featured: true,
-    publisher: "Agent Workspace",
+    publisher: "Agent Workspace Labs",
     gradient: "linear-gradient(135deg, rgba(255,210,160,0.92), rgba(255,244,233,0.98))",
     updatedAt: "2026-04-15",
     compatibility: ["Claude Code", "Codex", "LangGraph", "Convex"],
@@ -316,7 +348,7 @@ This should support:
     category: "Specification",
     trust: "Community",
     featured: false,
-    publisher: "Agent Workspace",
+    publisher: "Open Workflow Lab",
     gradient: "linear-gradient(135deg, rgba(223,248,238,0.95), rgba(248,255,252,0.98))",
     updatedAt: "2026-04-15",
     compatibility: ["Claude Code", "Codex", "OpenClaw", "Convex"],
@@ -396,7 +428,7 @@ Persist those outputs in a structured operating-system layer. Then feed that lay
     category: "Runtime",
     trust: "Verified",
     featured: false,
-    publisher: "Agent Workspace",
+    publisher: "Agent Workspace Labs",
     gradient: "linear-gradient(135deg, rgba(236,230,255,0.95), rgba(251,249,255,0.99))",
     updatedAt: "2026-04-15",
     compatibility: ["Claude Code", "Codex", "Gemini", "Convex"],
@@ -563,4 +595,8 @@ export const packCategories = Array.from(
 
 export function getHarnessPack(slug: string) {
   return harnessPacks.find((pack) => pack.slug === slug);
+}
+
+export function getPublisherProfile(name: string) {
+  return publisherProfiles[name];
 }

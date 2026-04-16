@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { CopyButton } from "@/components/CopyButton";
 import { PackArtwork } from "@/components/PackArtwork";
 import { PackArtworkAdmin } from "@/components/PackArtworkAdmin";
-import { getHarnessPack, harnessPacks } from "@/lib/harness-packs";
+import { getHarnessPack, getPublisherProfile, harnessPacks } from "@/lib/harness-packs";
 
 export function generateStaticParams() {
   return harnessPacks.map((pack) => ({ slug: pack.slug }));
@@ -22,6 +22,7 @@ export default async function PackDetailPage({
   }
 
   const convexEnabled = !!process.env.NEXT_PUBLIC_CONVEX_URL;
+  const publisher = getPublisherProfile(pack.publisher);
 
   return (
     <main className="app-shell">
@@ -38,7 +39,12 @@ export default async function PackDetailPage({
                   <span className="directory-pill directory-pill-small">{pack.category}</span>
                 </div>
                 <div className="space-y-3">
-                  <p className="section-label">{pack.publisher}</p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="section-label">{pack.publisher}</span>
+                    {publisher ? (
+                      <span className="directory-publisher-status">{publisher.status}</span>
+                    ) : null}
+                  </div>
                   <h1 className="text-4xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-5xl">
                     {pack.name}
                   </h1>
@@ -175,6 +181,33 @@ export default async function PackDetailPage({
                 )}
               </div>
             </section>
+
+            {publisher ? (
+              <section className="glass-panel px-6 py-6">
+                <p className="section-label">Publisher</p>
+                <div className="mt-4 space-y-4">
+                  <div className="publisher-profile-card">
+                    <div className="publisher-profile-avatar" aria-hidden="true">
+                      {publisher.initials}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-slate-950">{publisher.name}</p>
+                      <p className="mt-1 text-sm text-slate-600">{publisher.status}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm leading-6 text-slate-600">{publisher.description}</p>
+                  <a
+                    href={publisher.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="directory-link-button"
+                  >
+                    <span>Open publisher profile</span>
+                    <span aria-hidden="true">Open</span>
+                  </a>
+                </div>
+              </section>
+            ) : null}
 
             {convexEnabled ? <PackArtworkAdmin pack={pack} /> : null}
           </aside>

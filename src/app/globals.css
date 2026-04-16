@@ -154,6 +154,23 @@
     @apply bg-slate-950 text-white hover:bg-slate-950;
   }
 
+  .directory-filter-row {
+    @apply flex items-center justify-between rounded-[14px] border border-[rgba(72,57,39,0.08)] bg-white px-3 py-2.5 text-sm text-slate-700 transition hover:bg-slate-50;
+  }
+
+  .directory-filter-row-active {
+    @apply border-slate-950 bg-slate-950 text-white hover:bg-slate-950;
+  }
+
+  .directory-filter-count {
+    @apply rounded-full border border-[rgba(72,57,39,0.08)] px-2 py-0.5 text-[11px] font-medium text-slate-400;
+  }
+
+  .directory-filter-row-active .directory-filter-count,
+  .directory-category-row-active .directory-filter-count {
+    @apply border-white/20 text-white;
+  }
+
   .directory-category-row {
     @apply flex w-full items-center justify-between rounded-[16px] px-3 py-2 text-left text-sm text-slate-600 transition hover:bg-slate-50 hover:text-slate-950;
   }
@@ -261,11 +278,15 @@
   }
 
   .pack-publisher-badge {
-    @apply inline-flex items-center gap-2 rounded-full border border-[rgba(72,57,39,0.08)] bg-[rgba(250,247,241,0.92)] px-2.5 py-1 text-xs text-slate-600;
+    @apply inline-flex max-w-[70%] items-center gap-2 rounded-full border border-[rgba(72,57,39,0.08)] bg-[rgba(250,247,241,0.92)] px-2.5 py-1 text-xs text-slate-600;
   }
 
   .pack-publisher-dot {
     @apply h-1.5 w-1.5 rounded-full bg-slate-400;
+  }
+
+  .pack-publisher-avatar {
+    @apply inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-900 text-[10px] font-semibold text-white;
   }
 
   .directory-metadata-row {
@@ -274,6 +295,18 @@
 
   .directory-metadata-block {
     @apply rounded-[14px] border border-[rgba(72,57,39,0.08)] bg-white px-4 py-4;
+  }
+
+  .directory-publisher-status {
+    @apply rounded-full border border-[rgba(72,57,39,0.08)] bg-white px-2.5 py-1 text-[11px] font-medium text-slate-500;
+  }
+
+  .publisher-profile-card {
+    @apply flex items-center gap-3 rounded-[16px] border border-[rgba(72,57,39,0.08)] bg-white px-4 py-4;
+  }
+
+  .publisher-profile-avatar {
+    @apply inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-950 text-sm font-semibold text-white;
   }
 
   .pack-art-shell {

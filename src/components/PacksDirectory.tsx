@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { HarnessPack } from "@/lib/harness-packs";
+import { getPublisherProfile, HarnessPack } from "@/lib/harness-packs";
 import { PackArtwork } from "@/components/PackArtwork";
 
 type SortMode = "featured" | "updated" | "name";
@@ -71,6 +71,7 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
 
   const featuredPacks = packs.filter((pack) => pack.featured);
   const verifiedCount = packs.filter((pack) => pack.trust === "Verified").length;
+  const communityCount = packs.filter((pack) => pack.trust === "Community").length;
 
   return (
     <div className="space-y-8">
@@ -139,17 +140,24 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
 
             <div>
               <p className="section-label">Trust</p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {(["all", "Verified", "Community"] as const).map((trust) => (
+              <div className="mt-2 grid gap-2">
+                {(
+                  [
+                    { value: "all", label: "All", count: packs.length },
+                    { value: "Verified", label: "Verified", count: verifiedCount },
+                    { value: "Community", label: "Community", count: communityCount },
+                  ] as const
+                ).map((trust) => (
                   <button
-                    key={trust}
+                    key={trust.value}
                     type="button"
-                    onClick={() => setSelectedTrust(trust)}
-                    className={`directory-chip ${
-                      selectedTrust === trust ? "directory-chip-active" : ""
+                    onClick={() => setSelectedTrust(trust.value)}
+                    className={`directory-filter-row ${
+                      selectedTrust === trust.value ? "directory-filter-row-active" : ""
                     }`}
                   >
-                    {trust === "all" ? "All" : trust}
+                    <span>{trust.label}</span>
+                    <span className="directory-filter-count">{trust.count}</span>
                   </button>
                 ))}
               </div>
@@ -168,7 +176,7 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
                     }`}
                   >
                     <span>{category.name}</span>
-                    <span className="text-xs text-slate-400">{category.count}</span>
+                    <span className="directory-filter-count">{category.count}</span>
                   </button>
                 ))}
               </div>
@@ -289,13 +297,23 @@ function PackTile({ pack, featured = false }: { pack: HarnessPack; featured?: bo
           ))}
         </div>
         <div className="pack-card-footer">
-          <span className="pack-publisher-badge">
-            <span className="pack-publisher-dot" aria-hidden="true" />
-            {pack.publisher}
-          </span>
+          <PublisherBadge pack={pack} />
           <span className="text-xs text-slate-500">{pack.updatedAt}</span>
         </div>
       </div>
     </Link>
+  );
+}
+
+function PublisherBadge({ pack }: { pack: HarnessPack }) {
+  const profile = getPublisherProfile(pack.publisher);
+
+  return (
+    <span className="pack-publisher-badge">
+      <span className="pack-publisher-avatar" aria-hidden="true">
+        {profile?.initials ?? pack.publisher.slice(0, 2).toUpperCase()}
+      </span>
+      <span className="truncate">{pack.publisher}</span>
+    </span>
   );
 }
