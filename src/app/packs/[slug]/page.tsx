@@ -198,8 +198,12 @@ export default async function PackDetailPage({
                   </div>
                   <p className="text-sm leading-6 text-slate-600">{publisher.description}</p>
                   <div className="grid gap-2">
+                    <Link href={`/?publisher=${publisher.slug}`} className="directory-link-button">
+                      <span>Open filtered directory</span>
+                      <span aria-hidden="true">Open</span>
+                    </Link>
                     <Link href={`/publishers/${publisher.slug}`} className="directory-link-button">
-                      <span>View publisher packs</span>
+                      <span>View publisher page</span>
                       <span aria-hidden="true">Open</span>
                     </Link>
                     <a

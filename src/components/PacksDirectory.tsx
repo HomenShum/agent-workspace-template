@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState, useTransition } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { getPublisherProfile, HarnessPack } from "@/lib/harness-packs";
 import { PackArtwork } from "@/components/PackArtwork";
 
@@ -10,13 +11,12 @@ type TrustMode = "all" | "Verified" | "Community";
 type PublisherMode = "all" | string;
 
 export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
-  const [query, setQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [selectedTrust, setSelectedTrust] = useState<TrustMode>("all");
-  const [selectedPublisher, setSelectedPublisher] = useState<PublisherMode>("all");
-  const [sortMode, setSortMode] = useState<SortMode>("featured");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
+  const [queryInput, setQueryInput] = useState(searchParams.get("q") ?? "");
 
-  const normalizedQuery = query.trim().toLowerCase();
   const categories = [
     { name: "All", count: packs.length },
     ...Array.from(new Set(packs.map((pack) => pack.category)))
@@ -36,6 +36,103 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
         count: packs.filter((pack) => pack.publisher === publisher).length,
       })),
   ];
+  const sortParam = searchParams.get("sort");
+  const trustParam = searchParams.get("trust");
+  const categoryParam = searchParams.get("category");
+  const publisherParam = searchParams.get("publisher");
+
+  const selectedCategory = categories.some((category) => category.name === categoryParam)
+    ? categoryParam ?? "All"
+    : "All";
+  const selectedTrust =
+    trustParam === "Verified" || trustParam === "Community" ? trustParam : "all";
+  const selectedPublisher = publishers.some((publisher) => publisher.slug === publisherParam)
+    ? (publishers.find((publisher) => publisher.slug === publisherParam)?.name ?? "all")
+    : "all";
+  const selectedPublisherSlug =
+    selectedPublisher === "all"
+      ? "all"
+      : (publishers.find((publisher) => publisher.name === selectedPublisher)?.slug ?? "all");
+  const sortMode: SortMode =
+    sortParam === "updated" || sortParam === "name" || sortParam === "featured"
+      ? sortParam
+      : "featured";
+  const normalizedQuery = queryInput.trim().toLowerCase();
+
+  useEffect(() => {
+    setQueryInput(searchParams.get("q") ?? "");
+  }, [searchParams]);
+
+  function updateDirectoryState(updates: {
+    q?: string;
+    category?: string;
+    trust?: TrustMode;
+    publisher?: PublisherMode;
+    sort?: SortMode;
+  }) {
+    const nextParams = new URLSearchParams(searchParams.toString());
+
+    if (updates.q !== undefined) {
+      const nextQuery = updates.q.trim();
+      if (nextQuery) {
+        nextParams.set("q", nextQuery);
+      } else {
+        nextParams.delete("q");
+      }
+    }
+
+    if (updates.category !== undefined) {
+      if (updates.category !== "All") {
+        nextParams.set("category", updates.category);
+      } else {
+        nextParams.delete("category");
+      }
+    }
+
+    if (updates.trust !== undefined) {
+      if (updates.trust !== "all") {
+        nextParams.set("trust", updates.trust);
+      } else {
+        nextParams.delete("trust");
+      }
+    }
+
+    if (updates.publisher !== undefined) {
+      const nextPublisher =
+        updates.publisher === "all"
+          ? "all"
+          : (publishers.find((publisher) => publisher.name === updates.publisher)?.slug ?? "all");
+      if (nextPublisher !== "all") {
+        nextParams.set("publisher", nextPublisher);
+      } else {
+        nextParams.delete("publisher");
+      }
+    }
+
+    if (updates.sort !== undefined) {
+      if (updates.sort !== "featured") {
+        nextParams.set("sort", updates.sort);
+      } else {
+        nextParams.delete("sort");
+      }
+    }
+
+    const nextUrl = nextParams.toString() ? `${pathname}?${nextParams.toString()}` : pathname;
+    startTransition(() => {
+      router.replace(nextUrl, { scroll: false });
+    });
+  }
+
+  function resetFilters() {
+    setQueryInput("");
+    updateDirectoryState({
+      q: "",
+      category: "All",
+      trust: "all",
+      publisher: "all",
+      sort: "featured",
+    });
+  }
 
   const filteredPacks = packs
     .filter((pack) => {
@@ -91,8 +188,9 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
     selectedCategory !== "All" ? selectedCategory : null,
     selectedTrust !== "all" ? selectedTrust : null,
     selectedPublisher !== "all" ? selectedPublisher : null,
-    normalizedQuery ? `Search: ${query.trim()}` : null,
+    normalizedQuery ? `Search: ${queryInput.trim()}` : null,
   ].filter(Boolean) as string[];
+  const showFeatured = activeFilters.length === 0 && sortMode === "featured";
 
   return (
     <div className="space-y-8">
@@ -136,8 +234,12 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
               </label>
               <input
                 id="pack-search"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
+                value={queryInput}
+                onChange={(event) => {
+                  const nextQuery = event.target.value;
+                  setQueryInput(nextQuery);
+                  updateDirectoryState({ q: nextQuery });
+                }}
                 placeholder="Search harness packs..."
                 className="field-input mt-2"
               />
@@ -150,7 +252,7 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
               <select
                 id="sort-mode"
                 value={sortMode}
-                onChange={(event) => setSortMode(event.target.value as SortMode)}
+                onChange={(event) => updateDirectoryState({ sort: event.target.value as SortMode })}
                 className="field-input mt-2"
               >
                 <option value="featured">Featured first</option>
@@ -172,7 +274,7 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
                   <button
                     key={trust.value}
                     type="button"
-                    onClick={() => setSelectedTrust(trust.value)}
+                    onClick={() => updateDirectoryState({ trust: trust.value })}
                     className={`directory-filter-row ${
                       selectedTrust === trust.value ? "directory-filter-row-active" : ""
                     }`}
@@ -205,7 +307,7 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
                   <button
                     key={category.name}
                     type="button"
-                    onClick={() => setSelectedCategory(category.name)}
+                    onClick={() => updateDirectoryState({ category: category.name })}
                     className={`directory-category-row ${
                       selectedCategory === category.name ? "directory-category-row-active" : ""
                     }`}
@@ -224,11 +326,11 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
                   <button
                     key={publisher.slug}
                     type="button"
-                    onClick={() =>
-                      setSelectedPublisher(publisher.name === "All" ? "all" : publisher.name)
-                    }
+                    onClick={() => updateDirectoryState({ publisher: publisher.name === "All" ? "all" : publisher.name })}
                     className={`directory-category-row ${
-                      (publisher.name === "All" ? selectedPublisher === "all" : selectedPublisher === publisher.name)
+                      (publisher.slug === "all"
+                        ? selectedPublisherSlug === "all"
+                        : selectedPublisherSlug === publisher.slug)
                         ? "directory-category-row-active"
                         : ""
                     }`}
@@ -260,21 +362,23 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
         </aside>
 
         <div className="space-y-8">
-          <section>
-            <div className="mb-4 flex items-end justify-between gap-3">
-              <div>
-                <p className="section-label">Featured</p>
-                <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
-                  Start here
-                </h2>
+          {showFeatured ? (
+            <section>
+              <div className="mb-4 flex items-end justify-between gap-3">
+                <div>
+                  <p className="section-label">Featured</p>
+                  <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
+                    Start here
+                  </h2>
+                </div>
               </div>
-            </div>
-            <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
-              {featuredPacks.map((pack) => (
-                <PackTile key={pack.slug} pack={pack} featured />
-              ))}
-            </div>
-          </section>
+              <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+                {featuredPacks.map((pack) => (
+                  <PackTile key={pack.slug} pack={pack} featured />
+                ))}
+              </div>
+            </section>
+          ) : null}
 
           <section>
             <div className="mb-4 flex items-end justify-between gap-3">
@@ -293,7 +397,15 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
                 </span>
               </div>
               <div className="directory-results-meta">
-                <span className="directory-sort-label">Sort: {sortLabel(sortMode)}</span>
+                <div className="flex flex-wrap items-center justify-end gap-2">
+                  <span className="directory-sort-label">Sort: {sortLabel(sortMode)}</span>
+                  {activeFilters.length || sortMode !== "featured" ? (
+                    <button type="button" onClick={resetFilters} className="directory-reset-button">
+                      Reset view
+                    </button>
+                  ) : null}
+                  {isPending ? <span className="directory-results-chip">Updating...</span> : null}
+                </div>
                 {activeFilters.length ? (
                   <div className="flex flex-wrap gap-2">
                     {activeFilters.map((filter) => (

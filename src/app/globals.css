@@ -166,6 +166,10 @@
     @apply inline-flex items-center rounded-full border border-[rgba(72,57,39,0.08)] bg-white px-2.5 py-1 text-xs text-slate-600;
   }
 
+  .directory-reset-button {
+    @apply inline-flex items-center rounded-full border border-[rgba(72,57,39,0.12)] bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50;
+  }
+
   .directory-filter-panel {
     @apply rounded-[22px] border border-[rgba(72,57,39,0.1)] bg-[rgba(255,255,255,0.82)] px-5 py-5 lg:sticky lg:top-5 lg:self-start;
   }

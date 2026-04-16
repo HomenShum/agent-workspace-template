@@ -42,6 +42,9 @@ export default async function PublisherPage({
               <p className="directory-header-body">{publisher.description}</p>
             </div>
             <div className="directory-header-actions">
+              <Link href={`/?publisher=${publisher.slug}`} className="btn-primary inline-flex">
+                Browse filtered directory
+              </Link>
               <a
                 href={publisher.href}
                 target="_blank"
