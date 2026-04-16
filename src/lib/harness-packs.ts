@@ -19,6 +19,7 @@ export type HarnessPack = {
   summary: string;
   category: string;
   trust: "Verified" | "Community";
+  status: "Production-ready" | "Recommended" | "Experimental";
   featured: boolean;
   publisher: string;
   gradient: string;
@@ -81,6 +82,7 @@ export const harnessPacks: HarnessPack[] = [
       "A proven interface pattern for apps that need collaborative chat in the center and a persistent agent rail for plan trace, tool execution, telemetry, sources, and quality checks.",
     category: "Interface",
     trust: "Verified",
+    status: "Production-ready",
     featured: true,
     publisher: "Agent Workspace",
     gradient: "linear-gradient(135deg, rgba(255,229,202,0.96), rgba(255,247,238,0.98))",
@@ -174,6 +176,7 @@ The final answer should remain readable by itself, but the rail must preserve en
       "A multi-step harness pattern that uses a narrow planning pass, typed worker calls, and a constrained synthesis pass instead of letting one prompt attempt everything at once.",
     category: "Orchestration",
     trust: "Verified",
+    status: "Recommended",
     featured: true,
     publisher: "Agent Workspace Labs",
     gradient: "linear-gradient(135deg, rgba(255,210,160,0.92), rgba(255,244,233,0.98))",
@@ -264,6 +267,7 @@ Favor typed worker outputs over freeform intermediate prose.`,
       "A runtime pattern that persists final answers, quality checks, evaluation metadata, and downstream review state as first-class records instead of burying them in message text.",
     category: "Evaluation",
     trust: "Verified",
+    status: "Production-ready",
     featured: true,
     publisher: "Agent Workspace",
     gradient: "linear-gradient(135deg, rgba(212,236,255,0.96), rgba(247,250,255,0.98))",
@@ -347,6 +351,7 @@ This should support:
       "A future-facing pattern for teams that need to externalize tacit expertise into reusable operating instructions before they try to scale an agent across a domain.",
     category: "Specification",
     trust: "Community",
+    status: "Experimental",
     featured: false,
     publisher: "Open Workflow Lab",
     gradient: "linear-gradient(135deg, rgba(223,248,238,0.95), rgba(248,255,252,0.98))",
@@ -427,6 +432,7 @@ Persist those outputs in a structured operating-system layer. Then feed that lay
       "A disciplined runtime pattern that reserves deterministic rendering for tightly scoped known cases and uses an LLM only for bounded synthesis, not as the default execution path for every question.",
     category: "Runtime",
     trust: "Verified",
+    status: "Recommended",
     featured: false,
     publisher: "Agent Workspace Labs",
     gradient: "linear-gradient(135deg, rgba(236,230,255,0.95), rgba(251,249,255,0.99))",
@@ -508,6 +514,7 @@ The value is not fewer models. The value is a cleaner decision boundary.`,
       "A transport and persistence pattern for agents that need progressive rendering, reconnect safety, and post-run replay without losing the benefits of token or step streaming.",
     category: "Streaming",
     trust: "Verified",
+    status: "Production-ready",
     featured: false,
     publisher: "Agent Workspace",
     gradient: "linear-gradient(135deg, rgba(251,232,207,0.95), rgba(255,251,245,0.98))",

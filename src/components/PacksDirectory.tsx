@@ -72,6 +72,11 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
   const featuredPacks = packs.filter((pack) => pack.featured);
   const verifiedCount = packs.filter((pack) => pack.trust === "Verified").length;
   const communityCount = packs.filter((pack) => pack.trust === "Community").length;
+  const activeFilters = [
+    selectedCategory !== "All" ? selectedCategory : null,
+    selectedTrust !== "all" ? selectedTrust : null,
+    normalizedQuery ? `Search: ${query.trim()}` : null,
+  ].filter(Boolean) as string[];
 
   return (
     <div className="space-y-8">
@@ -226,9 +231,28 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
                   {filteredPacks.length} harness packs
                 </h2>
               </div>
-              <p className="text-sm text-slate-500">
-                Verified packs include starter instructions, sources, and evaluation guidance.
-              </p>
+            </div>
+            <div className="directory-results-bar">
+              <div className="directory-results-summary">
+                <span className="directory-results-count">{filteredPacks.length} shown</span>
+                <span className="text-sm text-slate-500">
+                  Verified packs include starter instructions, sources, and evaluation guidance.
+                </span>
+              </div>
+              <div className="directory-results-meta">
+                <span className="directory-sort-label">Sort: {sortLabel(sortMode)}</span>
+                {activeFilters.length ? (
+                  <div className="flex flex-wrap gap-2">
+                    {activeFilters.map((filter) => (
+                      <span key={filter} className="directory-results-chip">
+                        {filter}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <span className="directory-results-chip">No active filters</span>
+                )}
+              </div>
             </div>
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {filteredPacks.map((pack) => (
@@ -284,6 +308,9 @@ function PackTile({ pack, featured = false }: { pack: HarnessPack; featured?: bo
           </span>
           <span className="pack-category-label">{pack.category}</span>
         </div>
+        <div className="flex flex-wrap gap-2">
+          <StatusBadge status={pack.status} />
+        </div>
         <div className="space-y-2">
           <h3 className="text-lg font-semibold text-slate-950">{pack.name}</h3>
           <p className="text-sm leading-6 text-slate-600">{pack.tagline}</p>
@@ -316,4 +343,28 @@ function PublisherBadge({ pack }: { pack: HarnessPack }) {
       <span className="truncate">{pack.publisher}</span>
     </span>
   );
+}
+
+function StatusBadge({ status }: { status: HarnessPack["status"] }) {
+  return <span className={`pack-status-badge ${statusClassName(status)}`}>{status}</span>;
+}
+
+function statusClassName(status: HarnessPack["status"]) {
+  if (status === "Production-ready") {
+    return "pack-status-badge-production";
+  }
+  if (status === "Recommended") {
+    return "pack-status-badge-recommended";
+  }
+  return "pack-status-badge-experimental";
+}
+
+function sortLabel(sortMode: SortMode) {
+  if (sortMode === "featured") {
+    return "Featured first";
+  }
+  if (sortMode === "updated") {
+    return "Recently updated";
+  }
+  return "Alphabetical";
 }

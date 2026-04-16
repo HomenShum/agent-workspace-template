@@ -37,6 +37,7 @@ export default async function PackDetailPage({
                   </Link>
                   <span className="directory-pill directory-pill-small">{pack.trust}</span>
                   <span className="directory-pill directory-pill-small">{pack.category}</span>
+                  <span className={`pack-status-badge ${getStatusClassName(pack.status)}`}>{pack.status}</span>
                 </div>
                 <div className="space-y-3">
                   <div className="flex flex-wrap items-center gap-2">
@@ -299,4 +300,14 @@ function MetadataRow({ label, value }: { label: string; value: string }) {
       <span className="text-sm font-medium text-slate-900">{value}</span>
     </div>
   );
+}
+
+function getStatusClassName(status: "Production-ready" | "Recommended" | "Experimental") {
+  if (status === "Production-ready") {
+    return "pack-status-badge-production";
+  }
+  if (status === "Recommended") {
+    return "pack-status-badge-recommended";
+  }
+  return "pack-status-badge-experimental";
 }

@@ -142,6 +142,30 @@
     @apply inline-flex items-center gap-2 rounded-full border border-[rgba(72,57,39,0.1)] bg-white px-3 py-2;
   }
 
+  .directory-results-bar {
+    @apply mb-4 flex flex-col gap-3 rounded-[18px] border border-[rgba(72,57,39,0.08)] bg-[rgba(255,255,255,0.78)] px-4 py-4 lg:flex-row lg:items-center lg:justify-between;
+  }
+
+  .directory-results-summary {
+    @apply flex flex-col gap-1;
+  }
+
+  .directory-results-count {
+    @apply text-sm font-medium text-slate-900;
+  }
+
+  .directory-results-meta {
+    @apply flex flex-col gap-2 lg:items-end;
+  }
+
+  .directory-sort-label {
+    @apply text-xs font-medium uppercase tracking-[0.08em] text-slate-400;
+  }
+
+  .directory-results-chip {
+    @apply inline-flex items-center rounded-full border border-[rgba(72,57,39,0.08)] bg-white px-2.5 py-1 text-xs text-slate-600;
+  }
+
   .directory-filter-panel {
     @apply rounded-[22px] border border-[rgba(72,57,39,0.1)] bg-[rgba(255,255,255,0.82)] px-5 py-5 lg:sticky lg:top-5 lg:self-start;
   }
@@ -267,6 +291,22 @@
 
   .pack-trust-badge-verified {
     @apply border-emerald-200 bg-emerald-50 text-emerald-700;
+  }
+
+  .pack-status-badge {
+    @apply inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-medium;
+  }
+
+  .pack-status-badge-production {
+    @apply border-emerald-200 bg-emerald-50 text-emerald-700;
+  }
+
+  .pack-status-badge-recommended {
+    @apply border-sky-200 bg-sky-50 text-sky-700;
+  }
+
+  .pack-status-badge-experimental {
+    @apply border-amber-200 bg-amber-50 text-amber-700;
   }
 
   .pack-category-label {
