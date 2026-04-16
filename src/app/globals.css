@@ -108,6 +108,11 @@
       linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 252, 248, 0.88) 100%);
   }
 
+  .directory-hero-art-panel {
+    @apply rounded-[28px] border border-[rgba(72,57,39,0.12)] bg-white/70 p-3 shadow-[0_18px_40px_rgba(33,27,20,0.06)];
+    backdrop-filter: blur(12px);
+  }
+
   .directory-metric {
     @apply rounded-[22px] border border-[rgba(72,57,39,0.12)] bg-white/90 px-4 py-4;
   }
@@ -158,8 +163,37 @@
     @apply relative h-36 w-full;
   }
 
+  .pack-detail-hero {
+    @apply h-[220px] w-full overflow-hidden border-b border-[rgba(72,57,39,0.12)];
+  }
+
   .pack-trust-badge {
     @apply absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1 text-xs font-medium text-slate-700;
+  }
+
+  .pack-art-shell {
+    @apply relative h-full w-full overflow-hidden;
+  }
+
+  .pack-art-shell::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at top left, rgba(255, 255, 255, 0.55), transparent 30%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0));
+    pointer-events: none;
+  }
+
+  .pack-art-shell-compact::after {
+    background:
+      radial-gradient(circle at top left, rgba(255, 255, 255, 0.42), transparent 28%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0));
+  }
+
+  .pack-art-svg {
+    @apply h-full w-full;
+    display: block;
   }
 
   .directory-code-block {

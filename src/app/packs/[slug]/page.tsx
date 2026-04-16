@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CopyButton } from "@/components/CopyButton";
+import { PackArtwork } from "@/components/PackArtwork";
 import { getHarnessPack, harnessPacks } from "@/lib/harness-packs";
 
 export function generateStaticParams() {
@@ -25,7 +26,9 @@ export default async function PackDetailPage({
         <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_360px]">
           <div className="space-y-8">
             <section className="glass-panel overflow-hidden">
-              <div className="h-48 w-full" style={{ background: pack.gradient }} />
+              <div className="pack-detail-hero" style={{ background: pack.gradient }}>
+                <PackArtwork variant={pack.slug} />
+              </div>
               <div className="space-y-6 px-6 py-7 sm:px-8">
                 <div className="flex flex-wrap items-center gap-2">
                   <Link href="/" className="directory-pill directory-pill-small">

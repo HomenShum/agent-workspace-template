@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { HarnessPack } from "@/lib/harness-packs";
+import { PackArtwork } from "@/components/PackArtwork";
 
 type SortMode = "featured" | "updated" | "name";
 type TrustMode = "all" | "Verified" | "Community";
@@ -73,51 +74,56 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
   return (
     <div className="space-y-8">
       <section className="directory-hero">
-        <div className="space-y-5">
-          <p className="section-label text-[rgba(101,78,51,0.78)]">Natural-language harness directory</p>
-          <div className="max-w-4xl space-y-4">
-            <h1 className="text-4xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-5xl lg:text-6xl">
-              Agent Workspace
-            </h1>
-            <p className="max-w-3xl text-base leading-7 text-slate-600 sm:text-lg">
-              Browse verified harness packs for Claude Code, Codex, Cursor, and Convex. Each pack
-              bundles natural-language instructions, source links, evaluation guidance, and a
-              practical starter path.
-            </p>
-            <p className="text-sm font-medium text-[rgba(101,78,51,0.78)]">
-              Hosted at{" "}
+        <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_420px] xl:items-center">
+          <div className="space-y-5">
+            <p className="section-label text-[rgba(101,78,51,0.78)]">Natural-language harness directory</p>
+            <div className="max-w-4xl space-y-4">
+              <h1 className="text-4xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-5xl lg:text-6xl">
+                Agent Workspace
+              </h1>
+              <p className="max-w-3xl text-base leading-7 text-slate-600 sm:text-lg">
+                Browse verified harness packs for Claude Code, Codex, Cursor, and Convex. Each pack
+                bundles natural-language instructions, source links, evaluation guidance, and a
+                practical starter path.
+              </p>
+              <p className="text-sm font-medium text-[rgba(101,78,51,0.78)]">
+                Hosted at{" "}
+                <a
+                  href="https://agentworkspace.attrition.sh"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline decoration-[rgba(101,78,51,0.35)] underline-offset-4 hover:text-slate-950"
+                >
+                  agentworkspace.attrition.sh
+                </a>
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Link href="/chat" className="btn-primary inline-flex">
+                Open shared studio
+              </Link>
+              <Link href="/submit" className="btn-secondary">
+                Submit a harness pack
+              </Link>
               <a
-                href="https://agentworkspace.attrition.sh"
+                href="https://github.com/HomenShum/agent-workspace-template"
                 target="_blank"
                 rel="noreferrer"
-                className="underline decoration-[rgba(101,78,51,0.35)] underline-offset-4 hover:text-slate-950"
+                className="btn-secondary"
               >
-                agentworkspace.attrition.sh
+                View template repo
               </a>
-            </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <span className="directory-pill">model + harness</span>
+              <span className="directory-pill">source-backed patterns</span>
+              <span className="directory-pill">eval-ready packs</span>
+              <span className="directory-pill">FloorAI-derived runtime</span>
+              <span className="directory-pill">Attrition-hosted catalog</span>
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <Link href="/chat" className="btn-primary inline-flex">
-              Open shared studio
-            </Link>
-            <Link href="/submit" className="btn-secondary">
-              Submit a harness pack
-            </Link>
-            <a
-              href="https://github.com/HomenShum/agent-workspace-template"
-              target="_blank"
-              rel="noreferrer"
-              className="btn-secondary"
-            >
-              View template repo
-            </a>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <span className="directory-pill">model + harness</span>
-            <span className="directory-pill">source-backed patterns</span>
-            <span className="directory-pill">eval-ready packs</span>
-            <span className="directory-pill">FloorAI-derived runtime</span>
-            <span className="directory-pill">Attrition-hosted catalog</span>
+          <div className="directory-hero-art-panel">
+            <PackArtwork variant="directory" />
           </div>
         </div>
 
@@ -213,6 +219,7 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
               {featuredPacks.map((pack) => (
                 <Link key={pack.slug} href={`/packs/${pack.slug}`} className="pack-card pack-card-featured">
                   <div className="pack-card-hero" style={{ background: pack.gradient }}>
+                    <PackArtwork variant={pack.slug} compact />
                     <span className="pack-trust-badge">{pack.trust}</span>
                   </div>
                   <div className="space-y-3 p-5">
@@ -253,6 +260,7 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
               {filteredPacks.map((pack) => (
                 <Link key={pack.slug} href={`/packs/${pack.slug}`} className="pack-card">
                   <div className="pack-card-hero" style={{ background: pack.gradient }}>
+                    <PackArtwork variant={pack.slug} compact />
                     <span className="pack-trust-badge">{pack.trust}</span>
                   </div>
                   <div className="space-y-3 p-5">

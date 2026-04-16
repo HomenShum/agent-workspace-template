@@ -1,3 +1,5 @@
+import type { PackArtworkVariant } from "@/components/PackArtwork";
+
 export type HarnessPackSource = {
   label: string;
   url: string;
@@ -11,7 +13,7 @@ export type HarnessPackExample = {
 };
 
 export type HarnessPack = {
-  slug: string;
+  slug: PackArtworkVariant;
   name: string;
   tagline: string;
   summary: string;
