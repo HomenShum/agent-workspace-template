@@ -79,8 +79,8 @@ export const publisherProfiles: Record<string, PublisherProfile> = {
 
 export const harnessPacks: HarnessPack[] = [
   {
-    slug: "grounded-operator-rail",
-    name: "Grounded Operator Rail",
+    slug: "operator-chat-rail",
+    name: "Operator Chat Rail",
     tagline: "Shared chat plus traceable assistant rail for high-context workflows.",
     summary:
       "A proven interface pattern for apps that need collaborative chat in the center and a persistent agent rail for plan trace, tool execution, telemetry, sources, and quality checks.",
@@ -173,8 +173,8 @@ The final answer should remain readable by itself, but the rail must preserve en
     ],
   },
   {
-    slug: "planner-workers-synthesizer",
-    name: "Planner -> Workers -> Synthesizer",
+    slug: "planning-and-worker-flow",
+    name: "Planning and Worker Flow",
     tagline: "Tiered orchestration for questions that are too broad for a single call.",
     summary:
       "A multi-step harness pattern that uses a narrow planning pass, typed worker calls, and a constrained synthesis pass instead of letting one prompt attempt everything at once.",
@@ -264,8 +264,8 @@ Favor typed worker outputs over freeform intermediate prose.`,
     ],
   },
   {
-    slug: "answer-packets-quality-gates",
-    name: "Answer Packets + Quality Gates",
+    slug: "answer-review-and-quality-checks",
+    name: "Answer Review and Quality Checks",
     tagline: "Persist the answer as a reviewable artifact, not just a message string.",
     summary:
       "A runtime pattern that persists final answers, quality checks, evaluation metadata, and downstream review state as first-class records instead of burying them in message text.",
@@ -348,8 +348,8 @@ This should support:
     ],
   },
   {
-    slug: "elicitation-first-operating-system",
-    name: "Elicitation-First Operating System",
+    slug: "workflow-elicitation",
+    name: "Workflow Elicitation",
     tagline: "Capture operator judgment before you automate it.",
     summary:
       "A future-facing pattern for teams that need to externalize tacit expertise into reusable operating instructions before they try to scale an agent across a domain.",
@@ -429,8 +429,8 @@ Persist those outputs in a structured operating-system layer. Then feed that lay
     ],
   },
   {
-    slug: "deterministic-plus-llm-hybrid",
-    name: "Deterministic + LLM Hybrid",
+    slug: "hybrid-runtime",
+    name: "Hybrid Runtime",
     tagline: "Use rules for known packets, use synthesis only when ambiguity is real.",
     summary:
       "A disciplined runtime pattern that reserves deterministic rendering for tightly scoped known cases and uses an LLM only for bounded synthesis, not as the default execution path for every question.",
@@ -511,8 +511,8 @@ The value is not fewer models. The value is a cleaner decision boundary.`,
     ],
   },
   {
-    slug: "durable-streaming-events",
-    name: "Durable Streaming Events",
+    slug: "durable-streaming",
+    name: "Durable Streaming",
     tagline: "Stream plan and execution state through stored events, not transient sockets alone.",
     summary:
       "A transport and persistence pattern for agents that need progressive rendering, reconnect safety, and post-run replay without losing the benefits of token or step streaming.",

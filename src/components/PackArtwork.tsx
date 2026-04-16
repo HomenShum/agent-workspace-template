@@ -75,12 +75,12 @@ export function PackArtwork({
 
         <g transform={`scale(${scale})`}>
           {variant === "directory" ? <DirectoryArtwork /> : null}
-          {variant === "grounded-operator-rail" ? <GroundedOperatorRailArtwork /> : null}
-          {variant === "planner-workers-synthesizer" ? <PlannerWorkersSynthesizerArtwork /> : null}
-          {variant === "answer-packets-quality-gates" ? <AnswerPacketsArtwork /> : null}
-          {variant === "elicitation-first-operating-system" ? <ElicitationArtwork /> : null}
-          {variant === "deterministic-plus-llm-hybrid" ? <HybridArtwork /> : null}
-          {variant === "durable-streaming-events" ? <StreamingArtwork /> : null}
+          {variant === "operator-chat-rail" ? <GroundedOperatorRailArtwork /> : null}
+          {variant === "planning-and-worker-flow" ? <PlannerWorkersSynthesizerArtwork /> : null}
+          {variant === "answer-review-and-quality-checks" ? <AnswerPacketsArtwork /> : null}
+          {variant === "workflow-elicitation" ? <ElicitationArtwork /> : null}
+          {variant === "hybrid-runtime" ? <HybridArtwork /> : null}
+          {variant === "durable-streaming" ? <StreamingArtwork /> : null}
         </g>
       </svg>
     </div>
@@ -249,7 +249,7 @@ function StreamingArtwork() {
       <path
         d="M96 184C122 184 128 118 154 118C182 118 184 214 212 214C240 214 242 96 270 96C298 96 300 194 328 194C356 194 360 136 388 136C416 136 418 170 446 170C474 170 476 108 504 108C532 108 534 156 560 156"
         fill="none"
-        stroke="url(#accent-durable-streaming-events)"
+        stroke="url(#accent-durable-streaming)"
         strokeWidth={12}
         strokeLinecap="round"
       />

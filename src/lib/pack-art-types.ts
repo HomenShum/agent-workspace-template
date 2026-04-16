@@ -1,10 +1,10 @@
 export type ArtworkVariant =
   | "directory"
-  | "grounded-operator-rail"
-  | "planner-workers-synthesizer"
-  | "answer-packets-quality-gates"
-  | "elicitation-first-operating-system"
-  | "deterministic-plus-llm-hybrid"
-  | "durable-streaming-events";
+  | "operator-chat-rail"
+  | "planning-and-worker-flow"
+  | "answer-review-and-quality-checks"
+  | "workflow-elicitation"
+  | "hybrid-runtime"
+  | "durable-streaming";
 
 export type PackArtworkVariant = Exclude<ArtworkVariant, "directory">;
