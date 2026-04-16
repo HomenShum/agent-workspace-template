@@ -26,7 +26,7 @@ function HeaderFallback() {
     <header className="sticky top-0 z-40 border-b border-[rgba(72,57,39,0.12)] bg-[rgba(255,250,244,0.92)] backdrop-blur">
       <div className="mx-auto flex max-w-[1400px] items-center justify-between px-4 py-3 sm:px-5">
         <Link href="/" className="text-base font-semibold tracking-[-0.03em] text-slate-950">
-          agentworkspace.dev
+          Agent Workspace
         </Link>
       </div>
     </header>
@@ -43,7 +43,7 @@ function HeaderInner() {
       <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-4 py-3 sm:px-5">
         <div className="flex items-center gap-5">
           <Link href="/" className="text-base font-semibold tracking-[-0.03em] text-slate-950">
-            agentworkspace.dev
+            Agent Workspace
           </Link>
           <nav className="hidden items-center gap-1 md:flex">
             {navLinks.map((link) => {
@@ -66,6 +66,14 @@ function HeaderInner() {
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
+          <a
+            href="https://agentworkspace.attrition.sh"
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-full border border-[rgba(72,57,39,0.12)] bg-white px-3 py-2 text-xs text-slate-600 transition hover:bg-slate-50 hover:text-slate-950"
+          >
+            agentworkspace.attrition.sh
+          </a>
           <a
             href="https://github.com/HomenShum/agent-workspace-template"
             target="_blank"
@@ -112,6 +120,14 @@ function HeaderInner() {
                 </Link>
               );
             })}
+            <a
+              href="https://agentworkspace.attrition.sh"
+              target="_blank"
+              rel="noreferrer"
+              className="block rounded-xl bg-white px-3 py-2 text-sm font-medium text-slate-700"
+            >
+              Public site
+            </a>
             <a
               href="https://github.com/HomenShum/agent-workspace-template"
               target="_blank"

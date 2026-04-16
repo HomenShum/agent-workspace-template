@@ -17,9 +17,9 @@ const mono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "agentworkspace.dev",
+  title: "Agent Workspace",
   description:
-    "A components-style directory for natural-language agent harness packs, backed by the Agent Workspace template runtime.",
+    "A components-style directory for natural-language agent harness packs, now hosted at agentworkspace.attrition.sh and backed by the Agent Workspace template runtime.",
 };
 
 export default function RootLayout({

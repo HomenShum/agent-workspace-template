@@ -1,6 +1,6 @@
 # Agent Workspace
 
-`agent-workspace-template` is now framed as `agentworkspace.dev`: a components-style directory and starter runtime for natural-language agent harness packs.
+`agent-workspace-template` is now framed as `Agent Workspace`: a components-style directory and starter runtime for natural-language agent harness packs, publicly hosted at `agentworkspace.attrition.sh`.
 
 The repo still contains the reusable platform extracted from `FloorAI`, but the product story is now simpler:
 
@@ -77,13 +77,13 @@ npm run seed
 
 Then set `NEXT_PUBLIC_CONVEX_URL` in `.env.local` using the local Convex URL printed by `convex dev`.
 
-## Recommended public URL
+## Public URL
 
-If you deploy this repo as a public-facing product or internal catalog, the intended branding is:
+The current public-facing catalog lives at:
 
-- `agentworkspace.dev`
+- `https://agentworkspace.attrition.sh`
 
-The GitHub repository stays `agent-workspace-template`, but the UI and metadata are shaped around that public-facing identity.
+The GitHub repository stays `agent-workspace-template`, but the product surface is branded as `Agent Workspace`. The hosted URL is intentionally an Attrition subdomain rather than a separate root domain.
 
 ## Adaptation sequence
 

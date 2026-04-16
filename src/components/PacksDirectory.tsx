@@ -77,12 +77,23 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
           <p className="section-label text-[rgba(101,78,51,0.78)]">Natural-language harness directory</p>
           <div className="max-w-4xl space-y-4">
             <h1 className="text-4xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-5xl lg:text-6xl">
-              agentworkspace.dev
+              Agent Workspace
             </h1>
             <p className="max-w-3xl text-base leading-7 text-slate-600 sm:text-lg">
               Browse verified harness packs for Claude Code, Codex, Cursor, and Convex. Each pack
               bundles natural-language instructions, source links, evaluation guidance, and a
               practical starter path.
+            </p>
+            <p className="text-sm font-medium text-[rgba(101,78,51,0.78)]">
+              Hosted at{" "}
+              <a
+                href="https://agentworkspace.attrition.sh"
+                target="_blank"
+                rel="noreferrer"
+                className="underline decoration-[rgba(101,78,51,0.35)] underline-offset-4 hover:text-slate-950"
+              >
+                agentworkspace.attrition.sh
+              </a>
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -106,6 +117,7 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
             <span className="directory-pill">source-backed patterns</span>
             <span className="directory-pill">eval-ready packs</span>
             <span className="directory-pill">FloorAI-derived runtime</span>
+            <span className="directory-pill">Attrition-hosted catalog</span>
           </div>
         </div>
 
