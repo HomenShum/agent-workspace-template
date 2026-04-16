@@ -70,54 +70,40 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
     });
 
   const featuredPacks = packs.filter((pack) => pack.featured);
+  const verifiedCount = packs.filter((pack) => pack.trust === "Verified").length;
 
   return (
     <div className="space-y-8">
-      <section className="directory-hero">
-        <div className="directory-hero-copy">
+      <section className="directory-header">
+        <div className="directory-header-copy">
           <p className="section-label">Natural-language harness directory</p>
-          <h1 className="directory-hero-title">Agent Workspace</h1>
-          <p className="directory-hero-body">
-            Verified harness packs for Claude Code, Codex, Cursor, and Convex. Each pack bundles
-            instructions, sources, evaluation guidance, and a starter path that is easier to adopt
-            than a giant prompt dump.
+          <h1 className="directory-header-title">Agent Workspace</h1>
+          <p className="directory-header-body">
+            Browse verified harness packs with source links, evaluation guidance, and starter
+            instructions for Claude Code, Codex, Cursor, and Convex.
           </p>
-          <div className="flex flex-wrap gap-2">
-            <Link href="/chat" className="btn-primary inline-flex">
-              Open shared studio
-            </Link>
-            <Link href="/submit" className="btn-secondary">
-              Submit a pack
-            </Link>
-            <a
-              href="https://github.com/HomenShum/agent-workspace-template"
-              target="_blank"
-              rel="noreferrer"
-              className="btn-secondary"
-            >
-              View repo
-            </a>
-          </div>
         </div>
-        <div className="directory-hero-meta">
-          <div className="directory-hero-meta-row">
-            <span className="section-label">Hosted at</span>
-            <a
-              href="https://agentworkspace.attrition.sh"
-              target="_blank"
-              rel="noreferrer"
-              className="text-sm font-medium text-slate-900 underline underline-offset-4"
-            >
-              agentworkspace.attrition.sh
-            </a>
-          </div>
-          <div className="directory-stat-grid">
-            <Metric label="Verified packs" value={`${packs.filter((pack) => pack.trust === "Verified").length}`} />
-            <Metric label="Featured" value={`${featuredPacks.length}`} />
-            <Metric label="Runtimes" value="Claude / Codex / Convex" />
-          </div>
+        <div className="directory-header-actions">
+          <Link href="/submit" className="btn-primary inline-flex">
+            Submit a pack
+          </Link>
+          <a
+            href="https://github.com/HomenShum/agent-workspace-template"
+            target="_blank"
+            rel="noreferrer"
+            className="btn-secondary"
+          >
+            View repo
+          </a>
         </div>
       </section>
+
+      <div className="directory-stat-row">
+        <StatPill label="All packs" value={`${packs.length}`} />
+        <StatPill label="Verified" value={`${verifiedCount}`} />
+        <StatPill label="Featured" value={`${featuredPacks.length}`} />
+        <StatPill label="Hosted at" value="agentworkspace.attrition.sh" />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
         <aside className="directory-filter-panel">
@@ -187,6 +173,23 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
                 ))}
               </div>
             </div>
+
+            <div className="directory-utility-block">
+              <p className="section-label">Preview surfaces</p>
+              <div className="mt-3 space-y-2">
+                <DirectoryLink href="/chat" label="Shared studio" body="Centered thread plus persistent rail." />
+                <DirectoryLink
+                  href="/workspace-a"
+                  label="Builder preview"
+                  body="Scoped workspace for drafting a domain surface."
+                />
+                <DirectoryLink
+                  href="/workspace-b"
+                  label="Reviewer preview"
+                  body="Secondary workspace for oversight and review."
+                />
+              </div>
+            </div>
           </div>
         </aside>
 
@@ -195,41 +198,14 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
             <div className="mb-4 flex items-end justify-between gap-3">
               <div>
                 <p className="section-label">Featured</p>
-                <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-slate-950">Start here</h2>
+                <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
+                  Start here
+                </h2>
               </div>
             </div>
-            <div className="grid gap-4 xl:grid-cols-2">
+            <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
               {featuredPacks.map((pack) => (
-                <Link key={pack.slug} href={`/packs/${pack.slug}`} className="pack-card pack-card-featured">
-                  <div className="pack-card-header">
-                    <div className="pack-card-art" style={{ background: pack.gradient }}>
-                      <PackArtwork variant={pack.slug} compact />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <h3 className="text-xl font-semibold text-slate-950">{pack.name}</h3>
-                          <p className="mt-2 text-sm leading-6 text-slate-600">{pack.tagline}</p>
-                        </div>
-                        <span className="pack-trust-badge">{pack.trust}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="space-y-3 p-5">
-                    <p className="text-sm leading-6 text-slate-600">{pack.summary}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {pack.compatibility.slice(0, 3).map((item) => (
-                        <span key={item} className="directory-pill directory-pill-small">
-                          {item}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="flex items-center justify-between text-xs text-slate-500">
-                      <span>{pack.publisher}</span>
-                      <span>{pack.category}</span>
-                    </div>
-                  </div>
-                </Link>
+                <PackTile key={pack.slug} pack={pack} featured />
               ))}
             </div>
           </section>
@@ -248,58 +224,8 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
             </div>
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {filteredPacks.map((pack) => (
-                <Link key={pack.slug} href={`/packs/${pack.slug}`} className="pack-card">
-                  <div className="pack-card-header">
-                    <div className="pack-card-art pack-card-art-small" style={{ background: pack.gradient }}>
-                      <PackArtwork variant={pack.slug} compact />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <h3 className="text-lg font-semibold text-slate-950">{pack.name}</h3>
-                          <p className="mt-1 text-sm leading-6 text-slate-600">{pack.tagline}</p>
-                        </div>
-                        <span className="pack-trust-badge">{pack.trust}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="space-y-3 p-5">
-                    <p className="text-sm leading-6 text-slate-600">{pack.summary}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {pack.tags.slice(0, 3).map((tag) => (
-                        <span key={tag} className="directory-pill directory-pill-small">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="flex items-center justify-between text-xs text-slate-500">
-                      <span>{pack.publisher}</span>
-                      <span>{pack.category}</span>
-                    </div>
-                  </div>
-                </Link>
+                <PackTile key={pack.slug} pack={pack} />
               ))}
-            </div>
-          </section>
-
-          <section className="glass-panel px-6 py-6 sm:px-7">
-            <p className="section-label">Live previews</p>
-            <div className="mt-3 grid gap-4 lg:grid-cols-3">
-              <PreviewCard
-                title="Shared studio chat"
-                body="Centered collaborative thread with the right-side agent rail still attached."
-                href="/chat"
-              />
-              <PreviewCard
-                title="Builder preview"
-                body="A generic persona workspace you can rewrite into a domain-native builder or operator surface."
-                href="/workspace-a"
-              />
-              <PreviewCard
-                title="Reviewer preview"
-                body="A second scoped workspace for review, oversight, or aggregated decision surfaces."
-                href="/workspace-b"
-              />
             </div>
           </section>
         </div>
@@ -308,29 +234,63 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
   );
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
+function StatPill({ label, value }: { label: string; value: string }) {
   return (
-    <div className="directory-metric">
-      <p className="section-label">{label}</p>
-      <p className="mt-3 text-2xl font-semibold text-slate-950">{value}</p>
+    <div className="directory-stat-pill">
+      <span className="section-label">{label}</span>
+      <span className="text-sm font-medium text-slate-900">{value}</span>
     </div>
   );
 }
 
-function PreviewCard({
-  title,
+function DirectoryLink({
+  label,
   body,
   href,
 }: {
-  title: string;
+  label: string;
   body: string;
   href: string;
 }) {
   return (
-    <Link href={href} className="rounded-[22px] border border-[rgba(72,57,39,0.12)] bg-white px-5 py-5 transition hover:-translate-y-[1px] hover:shadow-[0_16px_30px_rgba(33,27,20,0.08)]">
-      <h3 className="text-lg font-semibold text-slate-950">{title}</h3>
-      <p className="mt-2 text-sm leading-6 text-slate-600">{body}</p>
-      <span className="mt-4 inline-flex text-sm font-medium text-slate-900">Open preview</span>
+    <Link href={href} className="directory-link-row">
+      <span className="text-sm font-medium text-slate-900">{label}</span>
+      <span className="mt-1 block text-sm leading-6 text-slate-600">{body}</span>
+    </Link>
+  );
+}
+
+function PackTile({ pack, featured = false }: { pack: HarnessPack; featured?: boolean }) {
+  return (
+    <Link
+      href={`/packs/${pack.slug}`}
+      className={`pack-card ${featured ? "pack-card-featured" : ""}`}
+    >
+      <div className="pack-card-hero" style={{ background: pack.gradient }}>
+        <PackArtwork variant={pack.slug} compact />
+      </div>
+      <div className="pack-card-body">
+        <div className="flex items-center justify-between gap-3">
+          <span className="pack-trust-badge">{pack.trust}</span>
+          <span className="text-xs text-slate-500">{pack.category}</span>
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold text-slate-950">{pack.name}</h3>
+          <p className="text-sm leading-6 text-slate-600">{pack.tagline}</p>
+          <p className="pack-card-summary">{pack.summary}</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {(featured ? pack.compatibility : pack.tags).slice(0, 3).map((item) => (
+            <span key={item} className="directory-pill directory-pill-small">
+              {item}
+            </span>
+          ))}
+        </div>
+        <div className="flex items-center justify-between text-xs text-slate-500">
+          <span>{pack.publisher}</span>
+          <span>{pack.updatedAt}</span>
+        </div>
+      </div>
     </Link>
   );
 }

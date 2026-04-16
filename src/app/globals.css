@@ -98,41 +98,36 @@
     @apply rounded-full border border-[rgba(72,57,39,0.12)] bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50;
   }
 
-  .directory-hero {
-    @apply flex flex-col gap-6 rounded-[22px] border border-[rgba(72,57,39,0.1)] px-6 py-6 sm:px-8;
-    background: #fffdf9;
+  .directory-header {
+    @apply flex flex-col gap-5 rounded-[22px] border border-[rgba(72,57,39,0.1)] bg-[rgba(255,253,249,0.96)] px-6 py-6 sm:flex-row sm:items-end sm:justify-between sm:px-7;
   }
 
-  .directory-hero-copy {
-    @apply max-w-4xl space-y-4;
+  .directory-header-copy {
+    @apply max-w-3xl space-y-3;
   }
 
-  .directory-hero-title {
-    @apply text-4xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-5xl;
+  .directory-header-title {
+    @apply text-4xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-[2.7rem];
   }
 
-  .directory-hero-body {
-    @apply max-w-3xl text-base leading-7 text-slate-600 sm:text-lg;
+  .directory-header-body {
+    @apply max-w-2xl text-sm leading-7 text-slate-600 sm:text-base;
   }
 
-  .directory-hero-meta {
-    @apply flex flex-col gap-4 border-t border-[rgba(72,57,39,0.08)] pt-5;
+  .directory-header-actions {
+    @apply flex shrink-0 flex-wrap gap-2;
   }
 
-  .directory-hero-meta-row {
-    @apply flex flex-wrap items-center justify-between gap-3;
+  .directory-stat-row {
+    @apply flex flex-wrap gap-2;
   }
 
-  .directory-stat-grid {
-    @apply grid gap-3 sm:grid-cols-3;
-  }
-
-  .directory-metric {
-    @apply rounded-[18px] border border-[rgba(72,57,39,0.1)] bg-[rgba(255,255,255,0.78)] px-4 py-4;
+  .directory-stat-pill {
+    @apply inline-flex items-center gap-2 rounded-full border border-[rgba(72,57,39,0.1)] bg-white px-3 py-2;
   }
 
   .directory-filter-panel {
-    @apply rounded-[22px] border border-[rgba(72,57,39,0.1)] bg-[rgba(255,255,255,0.82)] px-5 py-5;
+    @apply rounded-[22px] border border-[rgba(72,57,39,0.1)] bg-[rgba(255,255,255,0.82)] px-5 py-5 lg:sticky lg:top-5 lg:self-start;
   }
 
   .directory-chip {
@@ -149,6 +144,14 @@
 
   .directory-category-row-active {
     @apply bg-slate-950 text-white hover:bg-slate-950 hover:text-white;
+  }
+
+  .directory-utility-block {
+    @apply border-t border-[rgba(72,57,39,0.08)] pt-5;
+  }
+
+  .directory-link-row {
+    @apply block rounded-[16px] border border-[rgba(72,57,39,0.08)] bg-white px-3 py-3 transition hover:bg-slate-50;
   }
 
   .directory-pill {
@@ -169,19 +172,28 @@
   }
 
   .pack-card-featured {
-    @apply bg-white;
+    @apply border-[rgba(72,57,39,0.14)];
   }
 
-  .pack-card-header {
-    @apply flex items-start gap-4 border-b border-[rgba(72,57,39,0.08)] px-5 py-5;
+  .pack-card-hero {
+    @apply relative flex aspect-[16/9] items-center justify-center overflow-hidden border-b border-[rgba(72,57,39,0.08)] p-4;
   }
 
-  .pack-card-art {
-    @apply relative h-[112px] w-[132px] shrink-0 overflow-hidden rounded-[16px] border border-[rgba(72,57,39,0.08)];
+  .pack-card-hero .pack-art-shell {
+    @apply h-full w-full;
+    max-width: 240px;
   }
 
-  .pack-card-art-small {
-    @apply h-[88px] w-[112px];
+  .pack-card-body {
+    @apply flex min-h-[234px] flex-col justify-between gap-4 px-5 py-5;
+  }
+
+  .pack-card-summary {
+    @apply text-sm leading-6 text-slate-600;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .pack-detail-header {
