@@ -8,3 +8,6 @@ next-env.d.ts
 .vercel/
 dist/
 coverage/
+
+.vercel
+.env*.local
