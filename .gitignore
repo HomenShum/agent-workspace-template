@@ -3,11 +3,13 @@ node_modules/
 .convex/
 .env.local
 .env*.local
+.env.local-runtime
 *.tsbuildinfo
 next-env.d.ts
 .vercel/
 dist/
 coverage/
+.convex-dev*.log
 
 .vercel
 .env*.local

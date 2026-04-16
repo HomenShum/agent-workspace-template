@@ -13,6 +13,7 @@ export const seedTemplate = mutation({
       "evalCases",
       "evalRuns",
       "answerPackets",
+      "packArtwork",
       "packSubmissions",
       "messageEvents",
       "messages",

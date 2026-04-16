@@ -9,7 +9,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "convex run seed:seedTemplate"
+    "seed": "convex run seed:seedTemplate",
+    "art:generate": "node scripts/generate-pack-covers.mjs"
   },
   "dependencies": {
     "convex": "^1.17.0",

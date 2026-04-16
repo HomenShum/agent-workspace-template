@@ -15,6 +15,7 @@ import type * as audit from "../audit.js";
 import type * as evalRuns from "../evalRuns.js";
 import type * as files from "../files.js";
 import type * as messages from "../messages.js";
+import type * as packArtwork from "../packArtwork.js";
 import type * as seed from "../seed.js";
 import type * as submissions from "../submissions.js";
 import type * as users from "../users.js";
@@ -34,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   evalRuns: typeof evalRuns;
   files: typeof files;
   messages: typeof messages;
+  packArtwork: typeof packArtwork;
   seed: typeof seed;
   submissions: typeof submissions;
   users: typeof users;

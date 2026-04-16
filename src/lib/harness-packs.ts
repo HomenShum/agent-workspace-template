@@ -1,4 +1,4 @@
-import type { PackArtworkVariant } from "@/components/PackArtwork";
+import type { PackArtworkVariant } from "@/lib/pack-art-types";
 
 export type HarnessPackSource = {
   label: string;
@@ -38,6 +38,7 @@ export type HarnessPack = {
   failureModes: string[];
   sources: HarnessPackSource[];
   examples: HarnessPackExample[];
+  coverAssetPath?: string;
 };
 
 export const harnessPacks: HarnessPack[] = [
@@ -133,6 +134,7 @@ The final answer should remain readable by itself, but the rail must preserve en
       { label: "Open shared studio", href: "/chat" },
       { label: "FloorAI reference", href: "https://github.com/HomenShum/floorai", external: true },
     ],
+    coverAssetPath: "/pack-art/grounded-operator-rail.jpg",
   },
   {
     slug: "planner-workers-synthesizer",
@@ -223,6 +225,7 @@ Favor typed worker outputs over freeform intermediate prose.`,
       { label: "Builder preview workspace", href: "/workspace-a" },
       { label: "Reviewer preview workspace", href: "/workspace-b" },
     ],
+    coverAssetPath: "/pack-art/planner-workers-synthesizer.jpg",
   },
   {
     slug: "answer-packets-quality-gates",
@@ -306,6 +309,7 @@ This should support:
       { label: "Open shared studio", href: "/chat" },
       { label: "Template repo", href: "https://github.com/HomenShum/agent-workspace-template", external: true },
     ],
+    coverAssetPath: "/pack-art/answer-packets-quality-gates.jpg",
   },
   {
     slug: "elicitation-first-operating-system",
@@ -386,6 +390,7 @@ Persist those outputs in a structured operating-system layer. Then feed that lay
     examples: [
       { label: "Template repo", href: "https://github.com/HomenShum/agent-workspace-template", external: true },
     ],
+    coverAssetPath: "/pack-art/elicitation-first-operating-system.jpg",
   },
   {
     slug: "deterministic-plus-llm-hybrid",
@@ -467,6 +472,7 @@ The value is not fewer models. The value is a cleaner decision boundary.`,
     examples: [
       { label: "Builder preview workspace", href: "/workspace-a" },
     ],
+    coverAssetPath: "/pack-art/deterministic-plus-llm-hybrid.jpg",
   },
   {
     slug: "durable-streaming-events",
@@ -554,6 +560,7 @@ Prefer durability over pure SSE when operator review matters.`,
     examples: [
       { label: "Open shared studio", href: "/chat" },
     ],
+    coverAssetPath: "/pack-art/durable-streaming-events.jpg",
   },
 ];
 

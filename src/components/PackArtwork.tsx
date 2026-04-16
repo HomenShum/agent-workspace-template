@@ -1,13 +1,4 @@
-export type ArtworkVariant =
-  | "directory"
-  | "grounded-operator-rail"
-  | "planner-workers-synthesizer"
-  | "answer-packets-quality-gates"
-  | "elicitation-first-operating-system"
-  | "deterministic-plus-llm-hybrid"
-  | "durable-streaming-events";
-
-export type PackArtworkVariant = Exclude<ArtworkVariant, "directory">;
+import type { ArtworkVariant } from "@/lib/pack-art-types";
 
 export function PackArtwork({
   variant,
