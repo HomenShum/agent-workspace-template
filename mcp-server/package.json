@@ -1,0 +1,59 @@
+{
+  "name": "attrition-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for the attrition.sh agent harness catalog — browse, resolve, install production patterns from Claude Code / Cursor / Codex.",
+  "type": "module",
+  "bin": {
+    "attrition-mcp": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "verify": "tsx scripts/verify-mcp.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "claude-code",
+    "mcp",
+    "agent",
+    "harness",
+    "ai-agents",
+    "attrition",
+    "model-context-protocol",
+    "agent-workspace",
+    "packs"
+  ],
+  "author": "Homen Shum",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HomenShum/agent-workspace-template.git",
+    "directory": "mcp-server"
+  },
+  "bugs": {
+    "url": "https://github.com/HomenShum/agent-workspace-template/issues"
+  },
+  "homepage": "https://agentworkspace.attrition.sh",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0"
+  }
+}

@@ -125,3 +125,47 @@ That means the repo boots cleanly as a workspace scaffold before you add your ow
 If you are coming from the `FloorAI` repo, the original extraction notes live there in:
 
 - `docs/DOMAIN_SPINOUT_PLAYBOOK.md`
+
+## Use from Claude Code
+
+The catalog ships two npm packages you can wire into Claude Code, Cursor, or Codex:
+
+- **`attrition-mcp`** — stdio MCP server. Browse, resolve, and fetch packs from within your agent.
+- **`attrition`** — CLI. Install a pack into your repo as a `.claude/skills/` skill plus an `AGENTS.md` fragment.
+
+### MCP server
+
+Add to `~/.claude.json` (global) or a repo-local `.claude.json`:
+
+```json
+{
+  "mcpServers": {
+    "attrition": {
+      "command": "npx",
+      "args": ["-y", "attrition-mcp"],
+      "env": {
+        "ATTRITION_REGISTRY_URL": "https://agentworkspace.attrition.sh"
+      }
+    }
+  }
+}
+```
+
+For Cursor, use the same block in `~/.cursor/mcp.json`. For Codex and other MCP-capable clients, consult your client's MCP config docs — the `command` / `args` / `env` shape is the same.
+
+### CLI quick start
+
+```bash
+# Install a pack directly into .claude/skills/ and AGENTS.md
+npx attrition-sh pack install rag-hybrid-bm25-vector
+
+# Browse the catalog
+npx attrition-sh pack list
+npx attrition-sh pack search evaluator
+```
+
+`rag-hybrid-bm25-vector` is a real slug — swap it for any pack in the catalog.
+
+### For maintainers
+
+See [`docs/PUBLISHING.md`](docs/PUBLISHING.md) for the publish workflow, version bump policy, tarball smoke tests, and rollback via `npm deprecate`.

@@ -452,4 +452,107 @@
   .assistant-markdown td {
     @apply border-b border-gray-100 px-3 py-1.5 text-left align-top;
   }
+
+  /* -----------------------------------------------------------------------
+   * Notion-style pack detail document (/packs/[slug]).
+   *
+   * Turns the catalog detail page into a single continuous document:
+   *   - Warm paper background (reuse var(--bg))
+   *   - Slightly larger body text (17px), generous line-height
+   *   - Flat section wrappers (no per-section card chrome)
+   *   - Sticky jump navigation
+   *
+   * The utilities below are additive and only used by the new Notion-style
+   * pack page + its TOC / toolbar siblings. Existing `.glass-panel`,
+   * `.directory-*` classes are untouched so other surfaces don't regress.
+   * --------------------------------------------------------------------- */
+
+  .notion-doc {
+    background: var(--bg);
+    color: var(--text);
+    font-size: 17px;
+    line-height: 1.75;
+  }
+
+  .notion-doc p {
+    @apply text-slate-800;
+  }
+
+  .notion-section {
+    /* Flat section — no border, no card chrome. Scroll margin keeps anchor
+       jumps from hiding the heading under any future sticky header. */
+    @apply space-y-3;
+    scroll-margin-top: 80px;
+  }
+
+  .notion-heading {
+    @apply text-2xl font-semibold tracking-[-0.02em] text-slate-950;
+    margin-top: 0;
+    scroll-margin-top: 80px;
+  }
+
+  .notion-hero {
+    @apply space-y-3 border-b border-[rgba(72,57,39,0.12)] pb-8;
+  }
+
+  .notion-meta {
+    @apply flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-600;
+  }
+
+  .notion-meta-dot::before {
+    content: "·";
+    @apply mx-1 text-slate-400;
+  }
+
+  .notion-desc {
+    @apply mt-1 text-sm leading-6 text-slate-600;
+  }
+
+  .notion-divider {
+    @apply my-8 border-t border-[rgba(72,57,39,0.1)];
+  }
+
+  .notion-codeblock {
+    @apply rounded-md border border-[rgba(72,57,39,0.12)] bg-white px-3 py-3 font-mono text-[13px] leading-6 text-slate-800;
+  }
+
+  /* --- Jump-nav / table-of-contents ------------------------------------- */
+
+  .notion-toc {
+    @apply sticky top-24 self-start;
+  }
+
+  .notion-toc-label {
+    @apply mb-3;
+  }
+
+  .notion-toc-list {
+    @apply space-y-1.5 border-l border-[rgba(72,57,39,0.12)] pl-3;
+  }
+
+  .notion-toc-link {
+    @apply block text-sm text-slate-600 transition hover:text-slate-950;
+  }
+
+  .notion-toc-inline {
+    @apply rounded-[14px] border border-[rgba(72,57,39,0.1)] bg-white px-3 py-2;
+  }
+
+  .notion-toc-chip {
+    @apply inline-flex rounded-full border border-[rgba(72,57,39,0.12)] bg-white px-3 py-1 text-xs font-medium text-slate-700 transition hover:bg-slate-50;
+  }
+
+  /* --- Export toolbar --------------------------------------------------- */
+
+  .notion-toolbar {
+    @apply flex flex-wrap items-center gap-2;
+  }
+
+  .notion-toolbar-button {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-[rgba(72,57,39,0.12)] bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50;
+  }
+
+  .notion-toolbar-button-primary {
+    @apply border-slate-900 bg-slate-900 text-white hover:bg-slate-800;
+  }
 }

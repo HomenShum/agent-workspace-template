@@ -144,10 +144,35 @@ export default defineSchema({
     startedAt: v.number(),
     completedAt: v.optional(v.number()),
     summaryJson: v.optional(v.string()),
+    // --- M6 eval gate (all optional, non-breaking) ---
+    packSlug: v.optional(v.string()),
+    submissionId: v.optional(v.string()),
+    goldenSlug: v.optional(v.string()),
+    traceId: v.optional(v.string()),
+    passed: v.optional(v.boolean()),
+    passRate: v.optional(v.number()),
+    tokens: v.optional(v.number()),
+    durationMs: v.optional(v.number()),
+    assertionsJson: v.optional(v.string()),
   })
     .index("by_evalRunId", ["evalRunId"])
     .index("by_status", ["status"])
-    .index("by_startedAt", ["startedAt"]),
+    .index("by_startedAt", ["startedAt"])
+    .index("by_packSlug", ["packSlug"])
+    .index("by_submissionId", ["submissionId"]),
+
+  goldens: defineTable({
+    slug: v.string(),
+    packSlugPattern: v.string(), // glob-like: "advisor-pattern", "ui/*", "*"
+    description: v.string(),
+    inputJson: v.string(), // JSON-serialized input payload
+    assertionsJson: v.string(), // JSON-serialized Assertion[]
+    scoringRubric: v.string(),
+    blocking: v.boolean(),
+    createdAt: v.number(),
+  })
+    .index("by_slug", ["slug"])
+    .index("by_packSlugPattern", ["packSlugPattern"]),
 
   evalCases: defineTable({
     evalRunId: v.string(),
@@ -184,4 +209,75 @@ export default defineSchema({
     .index("by_eventId", ["eventId"])
     .index("by_workspaceId", ["workspaceId"])
     .index("by_actorId", ["actorId"]),
+
+  // --- M7a: Change-Trace catalog (Pillar 2) ---
+  // Header row per coding session. Mirrors src/lib/trace-schema.ts
+  // ChangeTrace minus the row payload (rows live in changeRows below).
+  changeTraces: defineTable({
+    traceId: v.string(),            // unique "ct_YYYY-MM-DD[_suffix]"
+    project: v.string(),
+    sessionId: v.string(),
+    createdAt: v.number(),          // epoch ms
+    tags: v.array(v.string()),
+    packsReferenced: v.array(v.string()),
+  })
+    .index("by_traceId", ["traceId"])
+    .index("by_project", ["project"]),
+
+  // --- D1 / J: cumulative install counter per pack slug ---
+  // Additive. Bounded growth (one row per pack). Written by
+  // convex/installs.ts:recordInstall, read by getInstallCountsBatch.
+  installCounts: defineTable({
+    slug: v.string(),
+    count: v.number(),
+    updatedAt: v.number(),
+  }).index("by_slug", ["slug"]),
+
+  // --- E4: consumers reverse index ---
+  // One row per (slug, projectId). Records which projects installed which
+  // packs, the version pinned, the install target, and the latest install
+  // timestamp. Written by convex/consumers.ts:recordConsumer, read by
+  // listConsumersForPack (pack detail page) and listPacksForProject (a
+  // project's trace page).
+  packConsumers: defineTable({
+    slug: v.string(),
+    projectId: v.string(),
+    project: v.string(),
+    version: v.string(),
+    target: v.string(), // "claude-code" | "cursor"
+    installedAt: v.number(),
+  })
+    .index("by_slug", ["slug"])
+    .index("by_projectId", ["projectId"]),
+
+  // Row-level detail. Full row stored as JSON for schema-evolution flex;
+  // hot fields (scenario, hook, files) denormalized for FTS / filter.
+  changeRows: defineTable({
+    traceId: v.string(),
+    rowIndex: v.number(),
+    scenario: v.string(),
+    filesTouched: v.array(v.string()),
+    whyPlain: v.string(),
+    whyHook: v.string(),
+    whyAnalogy: v.string(),
+    whyPrinciple: v.string(),
+    rawJson: v.string(),            // canonical ChangeRow JSON
+  }).index("by_traceId", ["traceId"]),
+
+  // --- Fork-to-workspace: per-operator editable copies of catalog packs ---
+  // One row per (operatorSessionId, slug). Markdown content is the full
+  // forked body, editable by the operator who owns the session. sourceVersion
+  // pins the pack version at fork time so we can later diff against upstream.
+  // Bounded: 100kB per row (enforced at mutation), ~200 rows per session
+  // (documented cap — enforced on write via listForksForSession length check).
+  userPackForks: defineTable({
+    operatorSessionId: v.string(),
+    slug: v.string(),
+    markdown: v.string(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+    sourceVersion: v.string(),
+  })
+    .index("by_session_slug", ["operatorSessionId", "slug"])
+    .index("by_session", ["operatorSessionId"]),
 });

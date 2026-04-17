@@ -5,12 +5,26 @@ import { useEffect, useState, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { getPublisherProfile, HarnessPack } from "@/lib/harness-packs";
 import { PackArtwork } from "@/components/PackArtwork";
+import { PackCard } from "@/components/PackCard";
+import type { Pack } from "@/lib/pack-schema";
 
 type SortMode = "featured" | "updated" | "name";
 type TrustMode = "all" | "Verified" | "Community";
 type PublisherMode = "all" | string;
 
-export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
+export function PacksDirectory({
+  packs,
+  hydratedBySlug = {},
+}: {
+  packs: HarnessPack[];
+  /**
+   * Slug -> canonical Pack (with telemetry, rediscoveryCost, installCount
+   * already joined). Built on the server so the client bundle never pulls
+   * node:fs via pack-registry. Missing entries fall through to a minimal
+   * shim that renders "Not yet measured" + "~0 installs" honestly.
+   */
+  hydratedBySlug?: Record<string, Pack>;
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -374,7 +388,11 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
               </div>
               <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
                 {featuredPacks.map((pack) => (
-                  <PackTile key={pack.slug} pack={pack} featured />
+                  <PackCard
+                    key={pack.slug}
+                    pack={hydrateLegacyPack(pack, hydratedBySlug)}
+                    featured
+                  />
                 ))}
               </div>
             </section>
@@ -421,7 +439,10 @@ export function PacksDirectory({ packs }: { packs: HarnessPack[] }) {
             </div>
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {filteredPacks.map((pack) => (
-                <PackTile key={pack.slug} pack={pack} />
+                <PackCard
+                  key={pack.slug}
+                  pack={hydrateLegacyPack(pack, hydratedBySlug)}
+                />
               ))}
             </div>
           </section>
@@ -522,6 +543,61 @@ function statusClassName(status: HarnessPack["status"]) {
     return "pack-status-badge-recommended";
   }
   return "pack-status-badge-experimental";
+}
+
+/**
+ * Join a legacy HarnessPack to its canonical Pack (if seeded) so the
+ * new PackCard can surface telemetry + rediscoveryCost + installCount.
+ *
+ * Fallback: if no canonical pack exists for this slug, build a minimal
+ * canonical shape from the legacy fields. Telemetry stays undefined, which
+ * PackCard renders as "Not yet measured" — honest, never synthesized.
+ */
+function hydrateLegacyPack(
+  pack: HarnessPack,
+  hydratedBySlug: Record<string, Pack>,
+): Pack {
+  const hydrated = hydratedBySlug[pack.slug];
+  if (hydrated) return hydrated;
+  // Minimal shim — only the fields PackCard reads are needed for correctness.
+  return {
+    slug: pack.slug,
+    name: pack.name,
+    tagline: pack.tagline,
+    summary: pack.summary,
+    packType: "harness",
+    canonicalPattern: "hybrid",
+    version: "0.1.0",
+    trust: pack.trust,
+    status: pack.status,
+    featured: pack.featured,
+    publisher: pack.publisher,
+    gradient: pack.gradient,
+    artworkVariant: pack.slug,
+    updatedAt: pack.updatedAt,
+    compatibility: pack.compatibility,
+    tags: pack.tags,
+    installCommand: `npx attrition-sh pack install ${pack.slug}`,
+    claudeCodeSnippet: "",
+    rawMarkdownPath: `/packs/${pack.slug}/raw`,
+    useWhen: pack.useWhen,
+    avoidWhen: pack.avoidWhen,
+    keyOutcomes: pack.keyOutcomes,
+    minimalInstructions: pack.minimalInstructions,
+    fullInstructions: pack.fullInstructions,
+    evaluationChecklist: pack.evaluationChecklist,
+    failureModes: [],
+    relatedPacks: [],
+    requires: [],
+    conflictsWith: [],
+    supersedes: [],
+    comparesWith: [],
+    changelog: [],
+    metrics: pack.metrics,
+    sources: pack.sources,
+    examples: pack.examples,
+    installCount: 0,
+  };
 }
 
 function sortLabel(sortMode: SortMode) {

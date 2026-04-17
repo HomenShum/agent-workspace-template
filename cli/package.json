@@ -1,0 +1,68 @@
+{
+  "name": "attrition-sh",
+  "version": "0.1.0",
+  "description": "CLI for installing agent harness + UI + RAG + eval patterns from attrition.sh into .claude/skills/ and AGENTS.md.",
+  "type": "module",
+  "bin": {
+    "attrition-sh": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "!dist/**/*.test.js",
+    "!dist/**/*.test.d.ts",
+    "!dist/**/*.spec.js",
+    "!dist/**/*.spec.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "claude-code",
+    "mcp",
+    "agent",
+    "harness",
+    "ai-agents",
+    "attrition",
+    "cli",
+    "agent-workspace",
+    "skills",
+    "packs"
+  ],
+  "author": "Homen Shum",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HomenShum/agent-workspace-template.git",
+    "directory": "cli"
+  },
+  "bugs": {
+    "url": "https://github.com/HomenShum/agent-workspace-template/issues"
+  },
+  "homepage": "https://agentworkspace.attrition.sh",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "ora": "^8.1.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.1.1"
+  }
+}

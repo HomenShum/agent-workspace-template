@@ -41,6 +41,8 @@ export type HarnessPack = {
   examples: HarnessPackExample[];
 };
 
+import type { PublisherProvenance } from "@/lib/pack-schema";
+
 export type PublisherProfile = {
   slug: string;
   name: string;
@@ -48,6 +50,12 @@ export type PublisherProfile = {
   status: "Verified publisher" | "Community publisher";
   description: string;
   href: string;
+  /**
+   * E3 — optional signed manifest. See PublisherProvenance in pack-schema.
+   * Kept as re-export so existing callers `getPublisherProfile(name)` keep
+   * returning the same shape with the new optional field.
+   */
+  provenance?: PublisherProvenance;
 };
 
 export const publisherProfiles: Record<string, PublisherProfile> = {
@@ -58,6 +66,31 @@ export const publisherProfiles: Record<string, PublisherProfile> = {
     status: "Verified publisher",
     description: "Core catalog publisher for the template runtime, UI patterns, and evaluation packs.",
     href: "https://github.com/HomenShum/agent-workspace-template",
+    // E3 — provenance manifest. `unverified` is honest: the manifest is
+    // present (renderable as "Signed (unverified)") but signature
+    // verification is not yet wired into the registry. Promoting to
+    // "verified" is the next milestone — do not flip without Ed25519 checks.
+    provenance: {
+      keyFingerprint: "sha256:placeholder-ed25519-fingerprint-2026-04-17",
+      signature: "placeholder-signature-base64-pending-tooling",
+      signedAt: "2026-04-17T00:00:00Z",
+      packs: [
+        "advisor-pattern",
+        "advisor-pattern-v2",
+        "operator-chat-rail",
+        "planning-and-worker-flow",
+        "answer-review-and-quality-checks",
+        "golden-eval-harness",
+        "rag-hybrid-bm25-vector",
+        "shadcn-data-table",
+        "linear-command-palette",
+        "pattern-decision-tree",
+        "claude-code-guide",
+        "injection-surface-audit",
+      ],
+      signedBy: "attrition-sign@0.1.0",
+      status: "unverified",
+    },
   },
   "Agent Workspace Labs": {
     slug: "agent-workspace-labs",
