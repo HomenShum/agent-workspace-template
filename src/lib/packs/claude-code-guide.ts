@@ -380,6 +380,11 @@ Version and harness identifier surface via \`claude --version\`. Pin the version
       url: "https://docs.anthropic.com/en/docs/claude-code/settings",
       note: "Canonical reference for .claude/settings.json hook matchers and configuration surface.",
     },
+    {
+      label: "Decoding the Configuration of AI Coding Agents (arXiv 2511.09268)",
+      url: "https://arxiv.org/abs/2511.09268",
+      note: "Empirical study of 328 Claude Code configuration files — surfaces SE concerns and co-occurrence patterns in real-world usage.",
+    },
   ],
   examples: [
     {

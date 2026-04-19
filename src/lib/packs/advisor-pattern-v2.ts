@@ -446,6 +446,11 @@ If the advisor variant is within 2 points of Opus-only and below 30% of its cost
       url: "https://docs.anthropic.com/en/docs/build-with-claude/tool-use",
       note: "Underpins the structured confidence + tool-failure escalation signals the pattern relies on.",
     },
+    {
+      label: "OpenHands: An Open Platform for AI Software Developers (arXiv 2407.16741, ICLR 2025)",
+      url: "https://arxiv.org/abs/2407.16741",
+      note: "Primary academic comparison point for open-source multi-agent coding platforms; contrast with this pattern's executor+advisor split.",
+    },
   ],
   examples: [
     {

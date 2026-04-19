@@ -373,6 +373,11 @@ This pack paraphrases and cites architecture content from VILA-Lab/Dive-into-Cla
       url: "https://owasp.org/www-project-top-10-for-large-language-model-applications/",
       note: "Canonical vocabulary for LLM-application vulnerabilities; maps to the threat classes this 7-layer architecture defends against.",
     },
+    {
+      label: "SWE-Agent: Agent-Computer Interfaces Enable Automated Software Engineering (arXiv 2405.15793, NeurIPS 2024)",
+      url: "https://arxiv.org/abs/2405.15793",
+      note: "Alternative safety posture — Docker-based container isolation as the primary boundary, versus this pack's layered per-action enforcement.",
+    },
   ],
   examples: [
     {

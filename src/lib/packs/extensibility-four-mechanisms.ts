@@ -36,6 +36,7 @@ export const extensibilityFourMechanisms: Pack = {
     "mcp",
     "tool-pool",
     "claude-code",
+    "dive-into-claude-code",
   ],
 
   installCommand: "npx attrition-sh pack install extensibility-four-mechanisms",
@@ -425,6 +426,11 @@ For a session that is expected to last >10 turns:
       label: "Model Context Protocol — specification",
       url: "https://modelcontextprotocol.io/",
       note: "Primary reference for MCP transports and the tool-surface extension semantics.",
+    },
+    {
+      label: "The OpenHands Software Agent SDK (arXiv 2511.03690)",
+      url: "https://arxiv.org/abs/2511.03690",
+      note: "Composable SDK reference — alternative extensibility model to Claude Code's graduated-cost Hook/Skill/Plugin/MCP layering.",
     },
   ],
   examples: [

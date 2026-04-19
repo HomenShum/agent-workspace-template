@@ -37,6 +37,7 @@ export const subagentDelegationThreeIsolationModes: Pack = {
     "isolation",
     "sidechain",
     "claude-code",
+    "dive-into-claude-code",
   ],
 
   installCommand:

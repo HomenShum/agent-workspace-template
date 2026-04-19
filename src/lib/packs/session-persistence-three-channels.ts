@@ -36,6 +36,7 @@ export const sessionPersistenceThreeChannels: Pack = {
     "safety",
     "resume",
     "claude-code",
+    "dive-into-claude-code",
   ],
 
   installCommand:

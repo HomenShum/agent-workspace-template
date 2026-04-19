@@ -33,37 +33,51 @@
 │  agentworkspace.attrition.sh                                                          ⌘K        │
 │  catalog of production patterns · installable from Claude Code / Cursor / Codex                 │
 │                                                                                                  │
-│  [ Packs · 11 ] [ Traces · 34 ] [ Publishers · 3 ]                      ⌕ rag                   │
+│  [ Packs · 23 ] [ Traces · 34 ] [ Publishers · 3 ]                      ⌕ dive                  │
 │                                                                                                  │
-│  Type:     [ harness · 4 ] [ ui · 2 ] [ rag · 1 ] [ eval · 1 ] [ ref · 2 ] [ data ] [ sec ]     │
-│  Pattern:  [ orchestrator-workers ] [ evaluator-optimizer ] [ hybrid ] [ routing ]              │
-│  Trust:    [ Verified · 3 ] [ Community · 8 ]                                                   │
+│  Type:     [ harness · 10 ] [ ref · 6 ] [ security · 3 ] [ ui · 2 ] [ rag · 1 ] [ eval · 1 ]    │
+│  Pattern:  [ orchestrator-workers ] [ evaluator-optimizer ] [ parallelization ] [ hybrid ]      │
+│  Trust:    [ Verified · 3 ] [ Community · 20 ]                                                  │
+│  Tag:      [ dive-into-claude-code · 9 ] [ ui-patterns · 2 ] [ eval · 1 ]                       │
 │  Model:    [ opus-4.6 ] [ sonnet-4.6 ] [ haiku-4.5 ] [ gpt-5 ]                                  │
 │                                                                                                  │
 │ ─────────────────────────────────────────────────────────────────────────────────────────────── │
 │                                                                                                  │
 │  SLUG                          TYPE    PATTERN             TRUST      v      SAVES     USED IN  │
 │  ──────────────────────        ──────  ──────────────────  ─────────  ──── ────────────────────  │
+│  ★ four-design-questions       ref     n/a                 Community  0.1.0 ~22k tok  floorai+1 │
 │  advisor-pattern               harn.   orchestrator-work.  Verified   0.3.2 ~40k tok  floorai+2 │
+│  advisor-pattern-v2            harn.   evaluator-optim.    Community  0.1.0 ~55k tok  —         │
 │  evaluator-optimizer-gan       harn.   evaluator-optim.    Verified   0.2.1 ~55k tok  propertyai│
 │  operator-chat-rail            harn.   prompt-chaining     Verified   0.1.0 ~18k tok  floorai   │
 │  planning-and-worker-flow      harn.   orchestrator-work.  Community  0.1.0 ~30k tok  —         │
 │  answer-review-quality-check   harn.   evaluator-optim.    Community  0.1.0 ~22k tok  —         │
+│  turn-execution-pipeline       harn.   orchestrator-work.  Community  0.1.0 ~48k tok  —         │
+│  subagent-delegation-isolation harn.   parallelization     Community  0.1.0 ~38k tok  —         │
+│  session-persistence-3-channel harn.   n/a                 Community  0.1.0 ~33k tok  —         │
 │  golden-eval-harness           eval    evaluator-optim.    Community  0.1.0 ~55k tok  floorai   │
 │  rag-hybrid-bm25-vector        rag     hybrid              Community  0.1.0 ~35k tok  floorai   │
 │  shadcn-data-table             ui      n/a                 Community  0.1.0 ~25k tok  —         │
-│  linear-command-palette        ui      n/a                 Community  0.1.0 ~28k tok  —         │
+│  linear-command-palette        ui      n/a                 Community  0.1.0 ~28k tok  floorai   │
 │  pattern-decision-tree         ref     n/a                 Community  0.1.0 ~20k tok  floorai   │
 │  claude-code-guide             ref     n/a                 Community  0.1.0 ~45k tok  —         │
+│  nine-context-sources          ref     n/a                 Community  0.1.0 ~42k tok  —         │
+│  extensibility-four-mechanisms ref     n/a                 Community  0.1.0 ~42k tok  —         │
+│  agent-design-space-6-decisns  ref     n/a                 Community  0.1.0 ~48k tok  —         │
+│  injection-surface-audit       sec     n/a                 Community  0.1.0 ~40k tok  —         │
+│  seven-safety-layers           sec     n/a                 Community  0.1.0 ~52k tok  —         │
+│  cve-pre-trust-window          sec     n/a                 Community  0.1.0 ~52k tok  —         │
+│  (plus durable-streaming · hybrid-runtime · workflow-elicitation — legacy harness)              │
 │                                                                                                  │
 │ ─────────────────────────────────────────────────────────────────────────────────────────────── │
 │                                                                                                  │
 │  RECENT TRACES   (cross-link to Pillar 2)                                                        │
+│  ct_2026-04-19  aw-template · 9 new dive-sourced packs + arxiv refs wired                        │
 │  ct_2026-04-17  aw-template · 4 rows · drift + eval-gate + win-race                              │
 │  ct_2026-04-16  floorai     · 1 row  · installed 3 packs via CLI                                 │
 │  ct_2026-04-15  propertyai  · 7 rows · spun from floorai; renamed stores → properties            │
 │                                                                                                  │
-│  Tokens saved this week: ~1.2M · Installs: 47 · New packs: 2 · Publishers: 3                    │
+│  Tokens saved this week: ~1.6M · Installs: 52 · New packs: 11 · Publishers: 3                   │
 ╰─────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 

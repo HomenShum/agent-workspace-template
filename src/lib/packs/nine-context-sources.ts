@@ -392,6 +392,11 @@ This pack paraphrases and cites architecture content from VILA-Lab/Dive-into-Cla
       url: "https://agents.md/",
       note: "Cross-tool specification for the AGENTS.md/CLAUDE.md file; adopted by Claude Code, Codex CLI, Cursor, Aider, Continue.",
     },
+    {
+      label: "On the Use of Agentic Coding Manifests (arXiv 2509.14744)",
+      url: "https://arxiv.org/abs/2509.14744",
+      note: "Analysis of 253 CLAUDE.md files across 242 repositories — structural patterns in operational commands confirm this pack's hierarchy model.",
+    },
   ],
   examples: [
     {
