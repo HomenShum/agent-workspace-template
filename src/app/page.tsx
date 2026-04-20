@@ -1,32 +1,45 @@
-import { Suspense } from "react";
-import { PacksDirectory } from "@/components/PacksDirectory";
+import { PacksDirectory, type DirectorySearchParams } from "@/components/PacksDirectory";
 import { TracesDirectorySnippet } from "@/components/TracesDirectorySnippet";
 import { buildDirectoryData } from "@/app/directory-data";
 
 /**
  * Home / directory landing.
  *
- * Server-side hydration pattern:
+ * Server-first rendering pattern:
  *   `buildDirectoryData()` lives in `src/app/directory-data.ts` and
  *   touches `node:fs` transitively (install counts + consumers source).
  *   It returns a serializable snapshot — `Pack[]` + live counts — which
- *   we hand to the client `PacksDirectory`. The client bundle never
- *   reaches into node:fs.
+ *   we hand to the NOW-server `PacksDirectory`. Filter state is read
+ *   from the `searchParams` prop (Next.js App Router) so the HTML that
+ *   ships already reflects the narrowed view. No Suspense boundary is
+ *   needed because the server component has no async data path.
+ *
+ * Why this matters:
+ *   Fetch-based consumers (OG previewers, LLM agents, some crawlers)
+ *   see the full directory — chip row, tag chips, filter sidebar, pack
+ *   grid — in the initial SSR HTML, not a Suspense fallback.
  */
-export default function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const raw = await searchParams;
+  const parsed = normalizeSearchParams(raw);
+
   const { packs, traceCount, publisherCount, allTagsByCount } =
     buildDirectoryData();
+
   return (
     <main className="app-shell">
       <div className="app-frame">
-        <Suspense fallback={<DirectoryFallback />}>
-          <PacksDirectory
-            packs={packs}
-            traceCount={traceCount}
-            publisherCount={publisherCount}
-            allTagsByCount={allTagsByCount}
-          />
-        </Suspense>
+        <PacksDirectory
+          packs={packs}
+          traceCount={traceCount}
+          publisherCount={publisherCount}
+          allTagsByCount={allTagsByCount}
+          searchParams={parsed}
+        />
         <section className="mt-8">
           <TracesDirectorySnippet />
         </section>
@@ -35,16 +48,28 @@ export default function Home() {
   );
 }
 
-function DirectoryFallback() {
-  return (
-    <section className="directory-header">
-      <div className="directory-header-copy">
-        <p className="section-label">Natural-language harness directory</p>
-        <h1 className="directory-header-title">Agent Workspace</h1>
-        <p className="directory-header-body">
-          Loading the latest harness packs and shareable browse filters.
-        </p>
-      </div>
-    </section>
-  );
+/**
+ * Next.js hands each param as `string | string[] | undefined`. Collapse
+ * to a single string (first value) so the server component receives a
+ * flat, typed shape. Drops empty strings so they behave as "absent".
+ */
+function normalizeSearchParams(
+  raw: Record<string, string | string[] | undefined>,
+): DirectorySearchParams {
+  function pick(key: string): string | undefined {
+    const value = raw[key];
+    const str = Array.isArray(value) ? value[0] : value;
+    if (typeof str !== "string") return undefined;
+    const trimmed = str.trim();
+    return trimmed.length > 0 ? trimmed : undefined;
+  }
+  return {
+    q: pick("q"),
+    tag: pick("tag"),
+    type: pick("type"),
+    pattern: pick("pattern"),
+    trust: pick("trust"),
+    publisher: pick("publisher"),
+    sort: pick("sort"),
+  };
 }

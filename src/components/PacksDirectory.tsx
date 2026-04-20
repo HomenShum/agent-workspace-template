@@ -1,323 +1,217 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useMemo, useState, useTransition } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { getPublisherProfile, type HarnessPack } from "@/lib/harness-packs";
 import { PackArtwork } from "@/components/PackArtwork";
 import { PackCard } from "@/components/PackCard";
+import { DirectorySearchBox } from "@/components/DirectorySearchBox";
+import { DirectoryClearFilters } from "@/components/DirectoryClearFilters";
 import type { Pack, PackType, CanonicalPattern } from "@/lib/pack-schema";
 import type { TagCount } from "@/lib/directory-tags";
 import { PINNED_TAG, pickTagChipSet } from "@/lib/directory-tags";
 
 type SortMode = "featured" | "updated" | "name";
 type TrustMode = "all" | "Verified" | "Community";
-type PublisherMode = "all" | string;
 
 /**
- * PacksDirectory — fully data-bound against the canonical `Pack[]`.
+ * Raw URL search-params shape handed in from the page. Each field is
+ * the unparsed string (or undefined) as Next gives it. Parsing + bounds-
+ * checking happens INSIDE the server component so the same props can
+ * come from either the real Next page or a test harness.
+ */
+export type DirectorySearchParams = {
+  q?: string;
+  tag?: string;
+  type?: string;
+  pattern?: string;
+  trust?: string;
+  publisher?: string;
+  sort?: string;
+};
+
+/**
+ * PacksDirectory — SERVER component, fully prop-driven.
  *
- * Single source of truth: every filter, sort, and render path consumes the
- * canonical `Pack` shape from `pack-registry.getAllPacks()` (joined with
- * install counts, trace count, publisher count, and a pre-computed tag
- * frequency table by the server-only helper `buildDirectoryData`).
+ * URL state drives every filter; the page reads `searchParams` from the
+ * Next.js App Router and hands the parsed object to this component.
+ * Nothing about filter/sort is resolved on the client — the HTML that
+ * ships is already the narrowed view.
  *
- * URL state drives all filters:
+ * URL params (all optional):
  *   - `?q=`         free-text search over name/tagline/summary/tags/compat/publisher
  *   - `?trust=`     Verified | Community
  *   - `?type=`      harness | ui | reference | data | rag | eval | design | security
  *   - `?pattern=`   canonical pattern (skip "n/a" from chip set)
- *   - `?tag=`       any pack tag. Chip-row chips are server-rendered <Link>s
- *                   so the filter works even without JS (the surrounding
- *                   controls that depend on useTransition re-hydrate on mount).
+ *   - `?tag=`       any pack tag
  *   - `?publisher=` publisher slug
  *   - `?sort=`      featured | updated | name
  *
- * Reset clears every one of the above.
+ * Every filter chip is a server-rendered <Link href="/?…params">. The
+ * search input is a `"use client"` island (DirectorySearchBox) that
+ * progressive-enhances a plain <form action="/">. The reset button is
+ * a plain server-side <form action="/"> that clears every param in one
+ * request (DirectoryClearFilters). No client hooks reach this file.
  */
 export function PacksDirectory({
   packs,
   traceCount,
   publisherCount,
   allTagsByCount,
+  searchParams,
 }: {
   packs: Pack[];
   traceCount: number;
   publisherCount: number;
   allTagsByCount: TagCount[];
+  searchParams: DirectorySearchParams;
 }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
-  const [queryInput, setQueryInput] = useState(searchParams.get("q") ?? "");
-
-  useEffect(() => {
-    setQueryInput(searchParams.get("q") ?? "");
-  }, [searchParams]);
-
   // ---------- derived filter-option tables (live counts) ----------
 
-  const typeOptions = useMemo(() => {
-    const map = new Map<PackType, number>();
-    for (const pack of packs) {
-      map.set(pack.packType, (map.get(pack.packType) ?? 0) + 1);
-    }
-    return [...map.entries()]
-      .map(([type, count]) => ({ type, count }))
-      .sort((a, b) =>
-        b.count !== a.count ? b.count - a.count : a.type.localeCompare(b.type),
-      );
-  }, [packs]);
-
-  const patternOptions = useMemo(() => {
-    const map = new Map<Exclude<CanonicalPattern, "n/a">, number>();
-    for (const pack of packs) {
-      if (pack.canonicalPattern === "n/a") continue;
-      const key = pack.canonicalPattern;
-      map.set(key, (map.get(key) ?? 0) + 1);
-    }
-    return [...map.entries()]
-      .map(([pattern, count]) => ({ pattern, count }))
-      .sort((a, b) =>
-        b.count !== a.count
-          ? b.count - a.count
-          : a.pattern.localeCompare(b.pattern),
-      );
-  }, [packs]);
-
-  const publishers = useMemo(
-    () => [
-      { name: "All", slug: "all", count: packs.length },
-      ...Array.from(new Set(packs.map((pack) => pack.publisher)))
-        .sort((left, right) => left.localeCompare(right))
-        .map((publisher) => ({
-          name: publisher,
-          slug: getPublisherProfile(publisher)?.slug ?? publisher,
-          count: packs.filter((pack) => pack.publisher === publisher).length,
-        })),
-    ],
-    [packs],
-  );
+  const typeOptions = buildTypeOptions(packs);
+  const patternOptions = buildPatternOptions(packs);
+  const publishers = buildPublisherOptions(packs);
 
   // Chip row: top-N tags plus pinned dive-into-claude-code.
-  const tagChipSet = useMemo(
-    () => pickTagChipSet(allTagsByCount),
-    [allTagsByCount],
-  );
+  const tagChipSet = pickTagChipSet(allTagsByCount);
 
-  // ---------- URL-bound selection ----------
+  // ---------- URL-bound selection (parse + bounds-check) ----------
 
-  const sortParam = searchParams.get("sort");
-  const trustParam = searchParams.get("trust");
-  const typeParam = searchParams.get("type");
-  const patternParam = searchParams.get("pattern");
-  const tagParam = searchParams.get("tag");
-  const publisherParam = searchParams.get("publisher");
-
-  const selectedType =
-    typeOptions.some((opt) => opt.type === typeParam)
-      ? (typeParam as PackType)
+  const selectedType: PackType | null = typeOptions.some(
+    (opt) => opt.type === searchParams.type,
+  )
+    ? (searchParams.type as PackType)
+    : null;
+  const selectedPattern: Exclude<CanonicalPattern, "n/a"> | null =
+    patternOptions.some((opt) => opt.pattern === searchParams.pattern)
+      ? (searchParams.pattern as Exclude<CanonicalPattern, "n/a">)
       : null;
-  const selectedPattern =
-    patternOptions.some((opt) => opt.pattern === patternParam)
-      ? (patternParam as Exclude<CanonicalPattern, "n/a">)
-      : null;
-  const selectedTag =
-    tagParam && allTagsByCount.some((entry) => entry.tag === tagParam)
-      ? tagParam
+  const selectedTag: string | null =
+    searchParams.tag &&
+    allTagsByCount.some((entry) => entry.tag === searchParams.tag)
+      ? searchParams.tag
       : null;
   const selectedTrust: TrustMode =
-    trustParam === "Verified" || trustParam === "Community" ? trustParam : "all";
+    searchParams.trust === "Verified" || searchParams.trust === "Community"
+      ? searchParams.trust
+      : "all";
   const selectedPublisherEntry = publishers.find(
-    (publisher) => publisher.slug === publisherParam,
+    (publisher) => publisher.slug === searchParams.publisher,
   );
   const selectedPublisher = selectedPublisherEntry?.name ?? "all";
   const selectedPublisherSlug = selectedPublisherEntry?.slug ?? "all";
   const sortMode: SortMode =
-    sortParam === "updated" || sortParam === "name" || sortParam === "featured"
-      ? sortParam
+    searchParams.sort === "updated" ||
+    searchParams.sort === "name" ||
+    searchParams.sort === "featured"
+      ? searchParams.sort
       : "featured";
-  const normalizedQuery = queryInput.trim().toLowerCase();
+  const queryInput = (searchParams.q ?? "").trim();
+  const normalizedQuery = queryInput.toLowerCase();
 
-  // ---------- URL helpers ----------
+  // ---------- URL helpers (server-computed hrefs for every chip) ----------
 
-  function buildHrefForTag(tag: string | null): string {
-    const nextParams = new URLSearchParams(searchParams.toString());
-    if (tag === null || tag === selectedTag) {
-      nextParams.delete("tag");
-    } else {
-      nextParams.set("tag", tag);
-    }
-    const qs = nextParams.toString();
-    return qs ? `${pathname}?${qs}` : pathname;
+  function baseParams(): URLSearchParams {
+    const p = new URLSearchParams();
+    if (searchParams.q) p.set("q", searchParams.q);
+    if (searchParams.tag) p.set("tag", searchParams.tag);
+    if (searchParams.type) p.set("type", searchParams.type);
+    if (searchParams.pattern) p.set("pattern", searchParams.pattern);
+    if (searchParams.trust) p.set("trust", searchParams.trust);
+    if (searchParams.publisher) p.set("publisher", searchParams.publisher);
+    if (searchParams.sort) p.set("sort", searchParams.sort);
+    return p;
   }
 
-  function updateDirectoryState(updates: {
-    q?: string;
-    type?: string | null;
-    pattern?: string | null;
-    tag?: string | null;
-    trust?: TrustMode;
-    publisher?: PublisherMode;
-    sort?: SortMode;
-  }) {
-    const nextParams = new URLSearchParams(searchParams.toString());
-
-    if (updates.q !== undefined) {
-      const nextQuery = updates.q.trim();
-      if (nextQuery) nextParams.set("q", nextQuery);
-      else nextParams.delete("q");
+  function hrefFor(updates: Partial<Record<keyof DirectorySearchParams, string | null>>): string {
+    const next = baseParams();
+    for (const [key, value] of Object.entries(updates)) {
+      if (value === null || value === undefined || value === "") {
+        next.delete(key);
+      } else {
+        next.set(key, value);
+      }
     }
-
-    if (updates.type !== undefined) {
-      if (updates.type) nextParams.set("type", updates.type);
-      else nextParams.delete("type");
-    }
-
-    if (updates.pattern !== undefined) {
-      if (updates.pattern) nextParams.set("pattern", updates.pattern);
-      else nextParams.delete("pattern");
-    }
-
-    if (updates.tag !== undefined) {
-      if (updates.tag) nextParams.set("tag", updates.tag);
-      else nextParams.delete("tag");
-    }
-
-    if (updates.trust !== undefined) {
-      if (updates.trust !== "all") nextParams.set("trust", updates.trust);
-      else nextParams.delete("trust");
-    }
-
-    if (updates.publisher !== undefined) {
-      const nextPublisher =
-        updates.publisher === "all"
-          ? "all"
-          : (publishers.find((publisher) => publisher.name === updates.publisher)
-              ?.slug ?? "all");
-      if (nextPublisher !== "all") nextParams.set("publisher", nextPublisher);
-      else nextParams.delete("publisher");
-    }
-
-    if (updates.sort !== undefined) {
-      if (updates.sort !== "featured") nextParams.set("sort", updates.sort);
-      else nextParams.delete("sort");
-    }
-
-    const nextUrl = nextParams.toString()
-      ? `${pathname}?${nextParams.toString()}`
-      : pathname;
-    startTransition(() => {
-      router.replace(nextUrl, { scroll: false });
-    });
+    const qs = next.toString();
+    return qs ? `/?${qs}` : "/";
   }
 
-  function resetFilters() {
-    setQueryInput("");
-    updateDirectoryState({
-      q: "",
-      type: null,
-      pattern: null,
-      tag: null,
-      trust: "all",
-      publisher: "all",
-      sort: "featured",
-    });
+  function hrefForTag(tag: string | null): string {
+    // click-to-toggle: clicking the currently-selected chip clears the tag.
+    if (tag === null || tag === selectedTag) return hrefFor({ tag: null });
+    return hrefFor({ tag });
   }
 
-  // ---------- filter + sort ----------
+  function hrefForPublisher(publisherName: string, publisherSlug: string): string {
+    if (publisherName === "All" || publisherSlug === "all") {
+      return hrefFor({ publisher: null });
+    }
+    return hrefFor({ publisher: publisherSlug });
+  }
+
+  // ---------- filter + sort (runs on server) ----------
 
   // Registry-order tiebreaker. `getAllPacks()` returns seeded packs in the
   // explicit order declared in `src/lib/packs/index.ts` (fourDesignQuestions
   // is first by design — entry-point, 2-minute orienting read). Featured-mode
   // sort uses this index as its final tiebreaker so the declared order wins
   // over alphabetical, keeping `four-design-questions` in the top slot.
-  const orderIndex = useMemo(() => {
-    const map = new Map<string, number>();
-    packs.forEach((pack, index) => map.set(pack.slug, index));
-    return map;
-  }, [packs]);
+  const orderIndex = new Map<string, number>();
+  packs.forEach((pack, index) => orderIndex.set(pack.slug, index));
 
-  const filteredPacks = useMemo(
-    () =>
-      packs
-        .filter((pack) => {
-          if (selectedType && pack.packType !== selectedType) return false;
-          if (selectedPattern && pack.canonicalPattern !== selectedPattern)
-            return false;
-          if (selectedTag && !pack.tags.includes(selectedTag)) return false;
-          if (selectedTrust !== "all" && pack.trust !== selectedTrust)
-            return false;
-          if (selectedPublisher !== "all" && pack.publisher !== selectedPublisher)
-            return false;
-          if (!normalizedQuery) return true;
-          const haystack = [
-            pack.name,
-            pack.tagline,
-            pack.summary,
-            pack.packType,
-            pack.canonicalPattern,
-            pack.publisher,
-            ...pack.compatibility,
-            ...pack.tags,
-          ]
-            .join(" ")
-            .toLowerCase();
-          return haystack.includes(normalizedQuery);
-        })
-        .sort((left, right) => {
-          if (sortMode === "name") return left.name.localeCompare(right.name);
-          if (sortMode === "updated")
-            return right.updatedAt.localeCompare(left.updatedAt);
-          // featured mode: featured > Verified > registry-declared order
-          const featuredDelta = Number(right.featured) - Number(left.featured);
-          if (featuredDelta !== 0) return featuredDelta;
-          const trustDelta =
-            Number(right.trust === "Verified") - Number(left.trust === "Verified");
-          if (trustDelta !== 0) return trustDelta;
-          const leftIdx = orderIndex.get(left.slug) ?? Number.MAX_SAFE_INTEGER;
-          const rightIdx =
-            orderIndex.get(right.slug) ?? Number.MAX_SAFE_INTEGER;
-          if (leftIdx !== rightIdx) return leftIdx - rightIdx;
-          return left.name.localeCompare(right.name);
-        }),
-    [
-      packs,
-      orderIndex,
-      selectedType,
-      selectedPattern,
-      selectedTag,
-      selectedTrust,
-      selectedPublisher,
-      normalizedQuery,
-      sortMode,
-    ],
-  );
+  const filteredPacks = packs
+    .filter((pack) => {
+      if (selectedType && pack.packType !== selectedType) return false;
+      if (selectedPattern && pack.canonicalPattern !== selectedPattern)
+        return false;
+      if (selectedTag && !pack.tags.includes(selectedTag)) return false;
+      if (selectedTrust !== "all" && pack.trust !== selectedTrust) return false;
+      if (selectedPublisher !== "all" && pack.publisher !== selectedPublisher)
+        return false;
+      if (!normalizedQuery) return true;
+      const haystack = [
+        pack.name,
+        pack.tagline,
+        pack.summary,
+        pack.packType,
+        pack.canonicalPattern,
+        pack.publisher,
+        ...pack.compatibility,
+        ...pack.tags,
+      ]
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(normalizedQuery);
+    })
+    .sort((left, right) => {
+      if (sortMode === "name") return left.name.localeCompare(right.name);
+      if (sortMode === "updated")
+        return right.updatedAt.localeCompare(left.updatedAt);
+      // featured mode: featured > Verified > registry-declared order
+      const featuredDelta = Number(right.featured) - Number(left.featured);
+      if (featuredDelta !== 0) return featuredDelta;
+      const trustDelta =
+        Number(right.trust === "Verified") - Number(left.trust === "Verified");
+      if (trustDelta !== 0) return trustDelta;
+      const leftIdx = orderIndex.get(left.slug) ?? Number.MAX_SAFE_INTEGER;
+      const rightIdx = orderIndex.get(right.slug) ?? Number.MAX_SAFE_INTEGER;
+      if (leftIdx !== rightIdx) return leftIdx - rightIdx;
+      return left.name.localeCompare(right.name);
+    });
 
   // Featured rail sort uses registry-declared order as primary key so the
   // entry-point reference pack (`four-design-questions`, index 0 in
   // `src/lib/packs/index.ts`) surfaces in the top slot regardless of trust
   // tier. Trust tier only breaks ties between packs at the same registry
   // position, which in practice never collides — each slug appears once.
-  // This mirrors the spec: "four-design-questions must land in the top slot"
-  // of the Featured section.
-  const featuredPacks = useMemo(
-    () =>
-      [...packs]
-        .filter((pack) => pack.featured)
-        .sort((left, right) => {
-          const leftIdx = orderIndex.get(left.slug) ?? Number.MAX_SAFE_INTEGER;
-          const rightIdx =
-            orderIndex.get(right.slug) ?? Number.MAX_SAFE_INTEGER;
-          if (leftIdx !== rightIdx) return leftIdx - rightIdx;
-          const trustDelta =
-            Number(right.trust === "Verified") - Number(left.trust === "Verified");
-          if (trustDelta !== 0) return trustDelta;
-          return left.name.localeCompare(right.name);
-        }),
-    [packs, orderIndex],
-  );
+  const featuredPacks = [...packs]
+    .filter((pack) => pack.featured)
+    .sort((left, right) => {
+      const leftIdx = orderIndex.get(left.slug) ?? Number.MAX_SAFE_INTEGER;
+      const rightIdx = orderIndex.get(right.slug) ?? Number.MAX_SAFE_INTEGER;
+      if (leftIdx !== rightIdx) return leftIdx - rightIdx;
+      const trustDelta =
+        Number(right.trust === "Verified") - Number(left.trust === "Verified");
+      if (trustDelta !== 0) return trustDelta;
+      return left.name.localeCompare(right.name);
+    });
 
   const verifiedCount = packs.filter((pack) => pack.trust === "Verified").length;
   const communityCount = packs.filter((pack) => pack.trust === "Community").length;
@@ -327,7 +221,7 @@ export function PacksDirectory({
     selectedTag ? `Tag: ${selectedTag}` : null,
     selectedTrust !== "all" ? selectedTrust : null,
     selectedPublisher !== "all" ? selectedPublisher : null,
-    normalizedQuery ? `Search: ${queryInput.trim()}` : null,
+    normalizedQuery ? `Search: ${queryInput}` : null,
   ].filter(Boolean) as string[];
   const anyFilterActive = activeFilterChips.length > 0;
   const showFeatured =
@@ -379,45 +273,41 @@ export function PacksDirectory({
       <TagChipRow
         chips={tagChipSet}
         selectedTag={selectedTag}
-        buildHref={buildHrefForTag}
+        hrefForTag={hrefForTag}
       />
 
       <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
         <aside className="directory-filter-panel">
           <div className="space-y-5">
-            <div>
-              <label htmlFor="pack-search" className="section-label">
-                Search
-              </label>
-              <input
-                id="pack-search"
-                value={queryInput}
-                onChange={(event) => {
-                  const nextQuery = event.target.value;
-                  setQueryInput(nextQuery);
-                  updateDirectoryState({ q: nextQuery });
-                }}
-                placeholder="Search harness packs..."
-                className="field-input mt-2"
-              />
-            </div>
+            <DirectorySearchBox />
 
             <div>
-              <label htmlFor="sort-mode" className="section-label">
-                Sort
-              </label>
-              <select
-                id="sort-mode"
-                value={sortMode}
-                onChange={(event) =>
-                  updateDirectoryState({ sort: event.target.value as SortMode })
-                }
-                className="field-input mt-2"
-              >
-                <option value="featured">Featured first</option>
-                <option value="updated">Recently updated</option>
-                <option value="name">Alphabetical</option>
-              </select>
+              <p className="section-label">Sort</p>
+              <div className="mt-2 space-y-1" data-testid="sort-chip-list">
+                {(
+                  [
+                    { value: "featured", label: "Featured first" },
+                    { value: "updated", label: "Recently updated" },
+                    { value: "name", label: "Alphabetical" },
+                  ] as const
+                ).map((option) => (
+                  <Link
+                    key={option.value}
+                    href={hrefFor({
+                      sort: option.value === "featured" ? null : option.value,
+                    })}
+                    className={`directory-category-row ${
+                      sortMode === option.value
+                        ? "directory-category-row-active"
+                        : ""
+                    }`}
+                    data-testid={`sort-chip-${option.value}`}
+                    aria-pressed={sortMode === option.value}
+                  >
+                    <span>{option.label}</span>
+                  </Link>
+                ))}
+              </div>
             </div>
 
             <div>
@@ -438,22 +328,22 @@ export function PacksDirectory({
                     },
                   ] as const
                 ).map((trust) => (
-                  <button
+                  <Link
                     key={trust.value}
-                    type="button"
-                    onClick={() =>
-                      updateDirectoryState({ trust: trust.value as TrustMode })
-                    }
+                    href={hrefFor({
+                      trust: trust.value === "all" ? null : trust.value,
+                    })}
                     className={`directory-filter-row ${
                       selectedTrust === trust.value
                         ? "directory-filter-row-active"
                         : ""
                     }`}
                     data-testid={`trust-chip-${trust.value}`}
+                    aria-pressed={selectedTrust === trust.value}
                   >
                     <span>{trust.label}</span>
                     <span className="directory-filter-count">{trust.count}</span>
-                  </button>
+                  </Link>
                 ))}
               </div>
               <div className="mt-3 grid gap-2">
@@ -479,31 +369,32 @@ export function PacksDirectory({
             <div>
               <p className="section-label">Type</p>
               <div className="mt-2 space-y-1" data-testid="type-chip-list">
-                <button
-                  type="button"
-                  onClick={() => updateDirectoryState({ type: null })}
+                <Link
+                  href={hrefFor({ type: null })}
                   className={`directory-category-row ${
                     !selectedType ? "directory-category-row-active" : ""
                   }`}
+                  data-testid="type-chip-all"
+                  aria-pressed={!selectedType}
                 >
                   <span>All</span>
                   <span className="directory-filter-count">{packs.length}</span>
-                </button>
+                </Link>
                 {typeOptions.map((opt) => (
-                  <button
+                  <Link
                     key={opt.type}
-                    type="button"
-                    onClick={() => updateDirectoryState({ type: opt.type })}
+                    href={hrefFor({ type: opt.type })}
                     className={`directory-category-row ${
                       selectedType === opt.type
                         ? "directory-category-row-active"
                         : ""
                     }`}
                     data-testid={`type-chip-${opt.type}`}
+                    aria-pressed={selectedType === opt.type}
                   >
                     <span>{opt.type}</span>
                     <span className="directory-filter-count">{opt.count}</span>
-                  </button>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -511,33 +402,32 @@ export function PacksDirectory({
             <div>
               <p className="section-label">Pattern</p>
               <div className="mt-2 space-y-1" data-testid="pattern-chip-list">
-                <button
-                  type="button"
-                  onClick={() => updateDirectoryState({ pattern: null })}
+                <Link
+                  href={hrefFor({ pattern: null })}
                   className={`directory-category-row ${
                     !selectedPattern ? "directory-category-row-active" : ""
                   }`}
+                  data-testid="pattern-chip-all"
+                  aria-pressed={!selectedPattern}
                 >
                   <span>All</span>
                   <span className="directory-filter-count">{packs.length}</span>
-                </button>
+                </Link>
                 {patternOptions.map((opt) => (
-                  <button
+                  <Link
                     key={opt.pattern}
-                    type="button"
-                    onClick={() =>
-                      updateDirectoryState({ pattern: opt.pattern })
-                    }
+                    href={hrefFor({ pattern: opt.pattern })}
                     className={`directory-category-row ${
                       selectedPattern === opt.pattern
                         ? "directory-category-row-active"
                         : ""
                     }`}
                     data-testid={`pattern-chip-${opt.pattern}`}
+                    aria-pressed={selectedPattern === opt.pattern}
                   >
                     <span>{opt.pattern}</span>
                     <span className="directory-filter-count">{opt.count}</span>
-                  </button>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -546,15 +436,9 @@ export function PacksDirectory({
               <p className="section-label">Publishers</p>
               <div className="mt-2 space-y-1">
                 {publishers.map((publisher) => (
-                  <button
+                  <Link
                     key={publisher.slug}
-                    type="button"
-                    onClick={() =>
-                      updateDirectoryState({
-                        publisher:
-                          publisher.name === "All" ? "all" : publisher.name,
-                      })
-                    }
+                    href={hrefForPublisher(publisher.name, publisher.slug)}
                     className={`directory-category-row ${
                       (publisher.slug === "all"
                         ? selectedPublisherSlug === "all"
@@ -562,12 +446,18 @@ export function PacksDirectory({
                         ? "directory-category-row-active"
                         : ""
                     }`}
+                    data-testid={`publisher-chip-${publisher.slug}`}
+                    aria-pressed={
+                      publisher.slug === "all"
+                        ? selectedPublisherSlug === "all"
+                        : selectedPublisherSlug === publisher.slug
+                    }
                   >
                     <span>{publisher.name}</span>
                     <span className="directory-filter-count">
                       {publisher.count}
                     </span>
-                  </button>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -639,17 +529,7 @@ export function PacksDirectory({
                     Sort: {sortLabel(sortMode)}
                   </span>
                   {anyFilterActive || sortMode !== "featured" ? (
-                    <button
-                      type="button"
-                      onClick={resetFilters}
-                      className="directory-reset-button"
-                      data-testid="directory-reset"
-                    >
-                      Reset view
-                    </button>
-                  ) : null}
-                  {isPending ? (
-                    <span className="directory-results-chip">Updating...</span>
+                    <DirectoryClearFilters />
                   ) : null}
                 </div>
                 {anyFilterActive ? (
@@ -671,10 +551,7 @@ export function PacksDirectory({
               </div>
             </div>
             {filteredPacks.length === 0 ? (
-              <DirectoryEmptyState
-                onReset={resetFilters}
-                hasActiveFilters={anyFilterActive}
-              />
+              <DirectoryEmptyState hasActiveFilters={anyFilterActive} />
             ) : (
               <div
                 className="grid gap-4 md:grid-cols-2 xl:grid-cols-3"
@@ -690,6 +567,51 @@ export function PacksDirectory({
       </div>
     </div>
   );
+}
+
+// ---------------- filter-option builders (pure) ----------------
+
+function buildTypeOptions(packs: Pack[]) {
+  const map = new Map<PackType, number>();
+  for (const pack of packs) {
+    map.set(pack.packType, (map.get(pack.packType) ?? 0) + 1);
+  }
+  return [...map.entries()]
+    .map(([type, count]) => ({ type, count }))
+    .sort((a, b) =>
+      b.count !== a.count ? b.count - a.count : a.type.localeCompare(b.type),
+    );
+}
+
+function buildPatternOptions(packs: Pack[]) {
+  const map = new Map<Exclude<CanonicalPattern, "n/a">, number>();
+  for (const pack of packs) {
+    if (pack.canonicalPattern === "n/a") continue;
+    map.set(
+      pack.canonicalPattern,
+      (map.get(pack.canonicalPattern) ?? 0) + 1,
+    );
+  }
+  return [...map.entries()]
+    .map(([pattern, count]) => ({ pattern, count }))
+    .sort((a, b) =>
+      b.count !== a.count
+        ? b.count - a.count
+        : a.pattern.localeCompare(b.pattern),
+    );
+}
+
+function buildPublisherOptions(packs: Pack[]) {
+  return [
+    { name: "All", slug: "all", count: packs.length },
+    ...Array.from(new Set(packs.map((pack) => pack.publisher)))
+      .sort((left, right) => left.localeCompare(right))
+      .map((publisher) => ({
+        name: publisher,
+        slug: getPublisherProfile(publisher)?.slug ?? publisher,
+        count: packs.filter((pack) => pack.publisher === publisher).length,
+      })),
+  ];
 }
 
 // ---------------- presentational helpers ----------------
@@ -735,11 +657,11 @@ function StatPill({ label, value }: { label: string; value: string }) {
 function TagChipRow({
   chips,
   selectedTag,
-  buildHref,
+  hrefForTag,
 }: {
   chips: TagCount[];
   selectedTag: string | null;
-  buildHref: (tag: string | null) => string;
+  hrefForTag: (tag: string | null) => string;
 }) {
   if (chips.length === 0) return null;
   return (
@@ -749,7 +671,7 @@ function TagChipRow({
     >
       <span className="section-label mr-1">Tag</span>
       <Link
-        href={buildHref(null)}
+        href={hrefForTag(null)}
         className={`directory-pill directory-pill-small ${
           selectedTag === null
             ? "border-slate-950 bg-slate-950 text-white"
@@ -766,7 +688,7 @@ function TagChipRow({
         return (
           <Link
             key={chip.tag}
-            href={buildHref(chip.tag)}
+            href={hrefForTag(chip.tag)}
             className={`directory-pill directory-pill-small ${
               active
                 ? "border-slate-950 bg-slate-950 text-white"
@@ -786,10 +708,8 @@ function TagChipRow({
 }
 
 function DirectoryEmptyState({
-  onReset,
   hasActiveFilters,
 }: {
-  onReset: () => void;
   hasActiveFilters: boolean;
 }) {
   return (
@@ -807,13 +727,12 @@ function DirectoryEmptyState({
           : "The catalog is empty. Seed a pack under src/lib/packs/ and it will show up here automatically."}
       </p>
       {hasActiveFilters ? (
-        <button
-          type="button"
-          onClick={onReset}
-          className="directory-reset-button mt-4"
-        >
-          Clear filters
-        </button>
+        <div className="mt-4 inline-flex">
+          <DirectoryClearFilters
+            label="Clear filters"
+            testId="directory-empty-reset"
+          />
+        </div>
       ) : null}
     </div>
   );
@@ -850,8 +769,7 @@ function sortLabel(sortMode: SortMode) {
  * the legacy shape via `getPacksByPublisher`. New surfaces should use
  * `<PackCard />` (canonical `Pack` shape) instead.
  *
- * This file stays `"use client"`; the tile itself is pure JSX with no
- * state or hooks, so it renders fine as a client-component sub-tree.
+ * Pure JSX, no hooks — renders fine as a server component sub-tree.
  */
 export function PackTile({
   pack,

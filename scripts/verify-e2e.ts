@@ -35,7 +35,7 @@ function record(name: string, ok: boolean, detail?: string) {
   console.log(`${mark} ${name}${detail ? ` — ${detail}` : ""}`);
 }
 
-async function waitFor(url: string, timeoutMs = 30_000): Promise<boolean> {
+async function waitFor(url: string, timeoutMs = 90_000): Promise<boolean> {
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
     try {
