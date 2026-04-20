@@ -1,42 +1,30 @@
 import { Suspense } from "react";
 import { PacksDirectory } from "@/components/PacksDirectory";
 import { TracesDirectorySnippet } from "@/components/TracesDirectorySnippet";
-import { harnessPacks } from "@/lib/harness-packs";
-import { getAllInstallCounts } from "@/lib/install-counts";
-import { getPackBySlug } from "@/lib/pack-registry";
-import type { Pack } from "@/lib/pack-schema";
+import { buildDirectoryData } from "@/app/directory-data";
 
 /**
- * Server-side hydration for the client PacksDirectory.
+ * Home / directory landing.
  *
- * Both `getAllInstallCounts` and `getPackBySlug` touch node:fs, so they
- * must run on the server. We join each legacy HarnessPack to its canonical
- * Pack and stamp the current install count, producing a slug->Pack map
- * that is passed to the client as a plain prop (serializable JSON).
+ * Server-side hydration pattern:
+ *   `buildDirectoryData()` lives in `src/app/directory-data.ts` and
+ *   touches `node:fs` transitively (install counts + consumers source).
+ *   It returns a serializable snapshot — `Pack[]` + live counts — which
+ *   we hand to the client `PacksDirectory`. The client bundle never
+ *   reaches into node:fs.
  */
-function buildHydratedBySlug(): Record<string, Pack> {
-  const counts = getAllInstallCounts();
-  const out: Record<string, Pack> = {};
-  for (const legacy of harnessPacks) {
-    const canonical = getPackBySlug(legacy.slug);
-    if (!canonical) continue;
-    out[legacy.slug] = {
-      ...canonical,
-      installCount: counts[legacy.slug] ?? 0,
-    };
-  }
-  return out;
-}
-
 export default function Home() {
-  const hydratedBySlug = buildHydratedBySlug();
+  const { packs, traceCount, publisherCount, allTagsByCount } =
+    buildDirectoryData();
   return (
     <main className="app-shell">
       <div className="app-frame">
         <Suspense fallback={<DirectoryFallback />}>
           <PacksDirectory
-            packs={harnessPacks}
-            hydratedBySlug={hydratedBySlug}
+            packs={packs}
+            traceCount={traceCount}
+            publisherCount={publisherCount}
+            allTagsByCount={allTagsByCount}
           />
         </Suspense>
         <section className="mt-8">
