@@ -101,12 +101,41 @@ export async function verifyPublic(base) {
     assert.equal(traces.traces.length, traces.total);
     for (const pack of packs.packs) assert(urls.includes(`${origin}/packs/${pack.slug}`), pack.slug);
     for (const trace of traces.traces) assert(urls.includes(`${origin}/traces/${trace.id}`), trace.id);
+    const publicBodies = new Map();
     for (const url of urls) {
       const parsed = new URL(url);
       assert.equal(parsed.origin, origin);
       assert.equal(parsed.search, "");
       assert(!/\/(api|my-packs|chat|submit|workspace-[ab])(?:\/|$)/.test(parsed.pathname));
-      metadata((await request(parsed.pathname)).body, parsed.pathname);
+      const { body } = await request(parsed.pathname);
+      metadata(body, parsed.pathname);
+      publicBodies.set(parsed.pathname, body);
+    }
+    // A visitor following a pack's publisher must find that same pack in its catalog.
+    // Inspect rendered anchors, not slug strings inside Next's serialized scripts.
+    const rendered = (html) => html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
+    const attribute = (tag, name) => tag.match(new RegExp(`\\b${name}="([^"]*)"`))?.[1];
+    const publisherMembers = new Map();
+    for (const pack of packs.packs) {
+      const body = rendered(publicBodies.get(`/packs/${pack.slug}`));
+      const publisherLinks = [...body.matchAll(/<a\b[^>]*>/g)]
+        .map(([tag]) => attribute(tag, "href")).filter((href) => href?.startsWith("/publishers/"));
+      assert.equal(publisherLinks.length, 1, `One actual publisher link: ${pack.slug}`);
+      const route = publisherLinks[0];
+      assert(publicBodies.has(route), `Discoverable publisher: ${route}`);
+      const members = publisherMembers.get(route) ?? [];
+      members.push(`/packs/${pack.slug}`);
+      publisherMembers.set(route, members);
+    }
+    assert(publisherMembers.size > 0, "Publisher membership cohort must not be empty");
+    for (const [route, members] of publisherMembers) {
+      const body = rendered(publicBodies.get(route));
+      const cards = [...body.matchAll(/<a\b[^>]*>/g)]
+        .filter(([tag]) => attribute(tag, "class")?.split(/\s+/).includes("pack-card"))
+        .map(([tag]) => attribute(tag, "href"));
+      assert.deepEqual(cards.sort(), members.sort(), `Origin packs and exact publisher membership: ${route}`);
+      const text = body.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ");
+      assert(text.includes(`${members.length} packs from this publisher`), `Accurate publisher count: ${route}`);
     }
     for (const prefix of ["/api/", "/my-packs", "/chat", "/submit", "/workspace-a", "/workspace-b"]) {
       assert(robots.body.includes(`Disallow: ${prefix}`));
