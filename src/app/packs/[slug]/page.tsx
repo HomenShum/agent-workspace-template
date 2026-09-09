@@ -1,3 +1,4 @@
+import { publicMetadata } from "@/lib/public-metadata";
 /**
  * Pack detail page — Notion-style single editable panel.
  *
@@ -45,6 +46,13 @@ import {
   TransferMatrixTable,
   getStatusClassName,
 } from "./page-sections";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const pack = getPackBySlug(slug);
+  if (!pack) notFound();
+  return publicMetadata(`/packs/${slug}`, pack.name, pack.tagline);
+}
 
 export function generateStaticParams() {
   return getAllPacks().map((pack) => ({ slug: pack.slug }));
@@ -130,7 +138,7 @@ export default async function PackDetailPage({
       <div className="mx-auto w-full max-w-[1240px] px-4 py-8 sm:px-6 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_220px]">
           <article
-            className="notion-article mx-auto w-full max-w-3xl"
+            className="notion-article mx-auto min-w-0 w-full max-w-3xl"
             data-testid="pack-article"
           >
             {/* ============= Top toolbar (back + export) ============= */}
@@ -165,20 +173,24 @@ export default async function PackDetailPage({
                 </p>
               ) : null}
               <div className="notion-meta">
-                <span className="font-medium text-slate-800">
-                  {pack.publisher}
-                </span>
+                {publisher ? (
+                  <Link href={`/publishers/${publisher.slug}`} className="font-medium text-slate-800 underline underline-offset-4">
+                    {pack.publisher}
+                  </Link>
+                ) : (
+                  <span className="font-medium text-slate-800">{pack.publisher}</span>
+                )}
                 <PublisherProvenanceBadge provenance={publisher?.provenance} />
                 {publisher ? (
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-slate-600">
                     {publisher.status}
                   </span>
                 ) : null}
-                <span className="text-slate-400">·</span>
-                <span className="text-xs text-slate-500">
+                <span className="text-slate-600">·</span>
+                <span className="text-xs text-slate-600">
                   Updated {pack.updatedAt}
                 </span>
-                <span className="text-slate-400">·</span>
+                <span className="text-slate-600">·</span>
                 <span
                   className="text-xs text-amber-900"
                   data-testid="install-hero-badge"
@@ -408,7 +420,7 @@ export default async function PackDetailPage({
                           <p className="mt-1 text-sm leading-6 text-slate-600">
                             {source.note}
                           </p>
-                          <span className="mt-2 inline-flex text-xs text-slate-500">
+                          <span className="mt-2 inline-flex text-xs text-slate-600">
                             {source.url}
                           </span>
                         </div>

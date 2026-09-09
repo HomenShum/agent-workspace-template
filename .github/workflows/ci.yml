@@ -1,0 +1,52 @@
+name: Repository checks
+
+on:
+  push:
+    branches: [master, "codex/**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: repository-checks-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: ${{ matrix.package }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        package: [root, cli, mcp-server]
+    defaults:
+      run:
+        working-directory: ${{ matrix.package == 'root' && '.' || matrix.package }}
+    env:
+      CI: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_PUBLIC_CONVEX_URL: ""
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ${{ matrix.package == 'root' && 'package-lock.json' || format('{0}/package-lock.json', matrix.package) }}
+      - run: npm ci
+      - run: npm audit --audit-level=low
+      - name: Root types, actual tests, build, public HTTP contract
+        if: matrix.package == 'root'
+        run: npm run check
+      - name: CLI installation scenarios
+        if: matrix.package == 'cli'
+        run: npm test
+      - name: Build CLI or MCP package
+        if: matrix.package != 'root'
+        run: npm run build
+      - name: MCP handlers against bounded mock HTTP
+        if: matrix.package == 'mcp-server'
+        run: npm run verify

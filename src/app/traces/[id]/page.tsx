@@ -1,3 +1,4 @@
+import { publicMetadata } from "@/lib/public-metadata";
 /**
  * /traces/[id] — change-trace detail page.
  *
@@ -15,6 +16,13 @@ import {
   RowTable,
   TraceHeader,
 } from "./page-sections";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const trace = getTraceById(id);
+  if (!trace) notFound();
+  return publicMetadata(`/traces/${id}`, `${trace.project}: ${trace.id}`, `Inspect ${trace.rows.length} change records, affected files, and referenced packs for ${trace.project}.`);
+}
 
 export function generateStaticParams() {
   return getAllTraces().map((t) => ({ id: t.id }));

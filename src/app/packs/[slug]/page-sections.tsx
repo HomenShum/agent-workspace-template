@@ -216,7 +216,7 @@ export function TelemetryStrip({
           ) : (
             <p className="section-label">Telemetry</p>
           )}
-          <span className="text-xs text-slate-500">Not yet measured</span>
+          <span className="text-xs text-slate-600">Not yet measured</span>
         </div>
       </section>
     );
@@ -244,7 +244,7 @@ export function TelemetryStrip({
         ) : (
           <p className="section-label">Telemetry</p>
         )}
-        <span className="text-xs text-slate-500">Measured on attrition.sh</span>
+        <span className="text-xs text-slate-600">Measured on attrition.sh</span>
       </div>
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {items.map((item) => (
@@ -252,7 +252,7 @@ export function TelemetryStrip({
             key={item.label}
             className="rounded-[14px] border border-[rgba(72,57,39,0.1)] bg-white px-3 py-2"
           >
-            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-slate-500">
+            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-slate-600">
               {item.label}
             </p>
             <p className="mt-1 text-sm font-semibold text-slate-950">{item.value}</p>
@@ -300,11 +300,11 @@ export function RediscoveryCostBadge({
               of research.
             </p>
           </div>
-          <span className="text-xs text-slate-500 group-open:hidden">Methodology</span>
-          <span className="hidden text-xs text-slate-500 group-open:inline">Hide</span>
+          <span className="text-xs text-slate-600 group-open:hidden">Methodology</span>
+          <span className="hidden text-xs text-slate-600 group-open:inline">Hide</span>
         </summary>
         <div className="mt-3 rounded-[14px] border border-[rgba(72,57,39,0.1)] bg-white px-4 py-3 text-sm leading-6 text-slate-700">
-          <p className="text-xs font-medium uppercase tracking-[0.08em] text-slate-500">
+          <p className="text-xs font-medium uppercase tracking-[0.08em] text-slate-600">
             Measured {rediscoveryCost.measuredAt}
           </p>
           <p className="mt-2">{rediscoveryCost.methodology}</p>
@@ -436,8 +436,8 @@ function LayerBlock({ title, body }: { title: string; body: string }) {
     <details className="group rounded-[14px] border border-[rgba(72,57,39,0.1)] bg-white">
       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3">
         <p className="text-sm font-semibold text-slate-950">{title}</p>
-        <span className="text-xs text-slate-500 group-open:hidden">Expand</span>
-        <span className="hidden text-xs text-slate-500 group-open:inline">Collapse</span>
+        <span className="text-xs text-slate-600 group-open:hidden">Expand</span>
+        <span className="hidden text-xs text-slate-600 group-open:inline">Collapse</span>
       </summary>
       <div className="border-t border-[rgba(72,57,39,0.1)] px-4 py-3 text-sm leading-6 text-slate-700">
         {body}
@@ -455,23 +455,23 @@ function LayerToolSpec({
     <details className="group rounded-[14px] border border-[rgba(72,57,39,0.1)] bg-white">
       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3">
         <p className="text-sm font-semibold text-slate-950">
-          Tool spec <span className="font-normal text-slate-500">({tools.length})</span>
+          Tool spec <span className="font-normal text-slate-600">({tools.length})</span>
         </p>
-        <span className="text-xs text-slate-500 group-open:hidden">Expand</span>
-        <span className="hidden text-xs text-slate-500 group-open:inline">Collapse</span>
+        <span className="text-xs text-slate-600 group-open:hidden">Expand</span>
+        <span className="hidden text-xs text-slate-600 group-open:inline">Collapse</span>
       </summary>
       <div className="border-t border-[rgba(72,57,39,0.1)]">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50">
               <tr>
-                <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-500">
+                <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-600">
                   Name
                 </th>
-                <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-500">
+                <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-600">
                   Signature
                 </th>
-                <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-500">
+                <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-600">
                   Description
                 </th>
               </tr>
@@ -526,16 +526,16 @@ export function TransferMatrixTable({
         <table className="w-full text-left text-sm">
           <thead className="bg-slate-50">
             <tr>
-              <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-500">
+              <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-600">
                 Model
               </th>
-              <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-500">
+              <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-600">
                 Pass rate
               </th>
-              <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-500">
+              <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-600">
                 Avg tokens
               </th>
-              <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-500">
+              <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-600">
                 Runs
               </th>
             </tr>
@@ -645,7 +645,7 @@ export function DeprecationBanner({ modelIds }: { modelIds: string[] }) {
               {getModelStatus(id).message ?? "Scheduled for retirement."}
             </span>
             {getModelStatus(id).replacedBy ? (
-              <span className="ml-2 text-slate-500">
+              <span className="ml-2 text-slate-600">
                 → migrate to <span className="font-mono text-slate-800">{getModelStatus(id).replacedBy}</span>
               </span>
             ) : null}
@@ -736,16 +736,16 @@ export function ComparesWithTable({
         <table className="w-full text-left text-sm">
           <thead className="bg-slate-50">
             <tr>
-              <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-500">
+              <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-600">
                 Alternative
               </th>
-              <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-500">
+              <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-600">
                 Axis
               </th>
-              <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-500">
+              <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-600">
                 Winner
               </th>
-              <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-500">
+              <th className="px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-600">
                 Note
               </th>
             </tr>
@@ -936,7 +936,7 @@ export function ConsumersSection({
             <span className="rounded-full bg-slate-100 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-slate-600">
               {c.target === "cursor" ? "cursor" : "claude"}
             </span>
-            <span className="font-mono text-[11px] text-slate-500">v{c.version}</span>
+            <span className="font-mono text-[11px] text-slate-600">v{c.version}</span>
           </Link>
         ))}
       </div>
@@ -1027,10 +1027,10 @@ export function SecurityReviewPanel({
  * ------------------------------------------------------------------------- */
 
 const TIER_STYLES: Record<FailureMode["tier"], string> = {
-  jr: "bg-emerald-500/10 text-emerald-300 border-emerald-500/30",
-  mid: "bg-sky-500/10 text-sky-300 border-sky-500/30",
-  sr: "bg-amber-500/10 text-amber-300 border-amber-500/30",
-  staff: "bg-rose-500/10 text-rose-300 border-rose-500/30",
+  jr: "bg-emerald-500/10 text-emerald-800 border-emerald-500/30",
+  mid: "bg-sky-500/10 text-sky-800 border-sky-500/30",
+  sr: "bg-amber-500/10 text-amber-800 border-amber-500/30",
+  staff: "bg-rose-500/10 text-rose-800 border-rose-500/30",
 };
 
 const TIER_LABEL: Record<FailureMode["tier"], string> = {
@@ -1058,7 +1058,7 @@ export function FailureModesPanel({
         variant={variant}
         id={id}
       >
-        <p className="text-sm text-white/60">
+        <p className="text-sm text-slate-600">
           This pack has not yet documented its production failure modes. Publishers are expected
           to add at least three before the pack can reach <strong>Verified</strong> trust.
         </p>
@@ -1077,7 +1077,7 @@ export function FailureModesPanel({
         {failureModes.map((fm, i) => (
           <li
             key={i}
-            className="rounded-lg border border-white/10 bg-white/[0.02] p-4 space-y-2"
+            className="rounded-lg border border-slate-200 bg-white p-4 space-y-2"
           >
             <div className="flex items-start gap-3 flex-wrap">
               <span
@@ -1086,16 +1086,16 @@ export function FailureModesPanel({
               >
                 {TIER_LABEL[fm.tier]}
               </span>
-              <p className="flex-1 text-sm font-medium text-white">{fm.symptom}</p>
+              <p className="flex-1 text-sm font-medium text-slate-900">{fm.symptom}</p>
             </div>
-            <dl className="grid gap-1 text-sm text-white/70 sm:grid-cols-[auto_1fr] sm:gap-x-3">
-              <dt className="text-white/50">Trigger</dt>
+            <dl className="grid gap-1 text-sm text-slate-700 sm:grid-cols-[auto_1fr] sm:gap-x-3">
+              <dt className="text-slate-600">Trigger</dt>
               <dd>{fm.trigger}</dd>
-              <dt className="text-white/50">Prevention</dt>
+              <dt className="text-slate-600">Prevention</dt>
               <dd>{fm.preventionCheck}</dd>
               {fm.relatedPacks && fm.relatedPacks.length > 0 ? (
                 <>
-                  <dt className="text-white/50">See also</dt>
+                  <dt className="text-slate-600">See also</dt>
                   <dd className="flex flex-wrap gap-1">
                     {fm.relatedPacks.map((slug) => (
                       <Link
@@ -1150,7 +1150,7 @@ export function ChangelogList({
               <p className="font-mono text-sm font-semibold text-slate-950">
                 v{entry.version}
               </p>
-              <p className="text-xs text-slate-500">{entry.date}</p>
+              <p className="text-xs text-slate-600">{entry.date}</p>
             </div>
             {entry.added.length > 0 ? (
               <ChangeList label="Added" items={entry.added} tone="emerald" />

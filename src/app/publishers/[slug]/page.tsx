@@ -1,3 +1,4 @@
+import { publicMetadata } from "@/lib/public-metadata";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PackTile } from "@/components/PacksDirectory";
@@ -6,6 +7,13 @@ import {
   getPublisherProfileBySlug,
   publisherProfiles,
 } from "@/lib/harness-packs";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const publisher = getPublisherProfileBySlug(slug);
+  if (!publisher) notFound();
+  return publicMetadata(`/publishers/${slug}`, `${publisher.name} packs`, publisher.description);
+}
 
 export function generateStaticParams() {
   return Object.values(publisherProfiles).map((publisher) => ({ slug: publisher.slug }));

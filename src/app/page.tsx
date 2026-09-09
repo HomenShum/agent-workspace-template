@@ -1,6 +1,10 @@
 import { PacksDirectory, type DirectorySearchParams } from "@/components/PacksDirectory";
 import { TracesDirectorySnippet } from "@/components/TracesDirectorySnippet";
 import { buildDirectoryData } from "@/app/directory-data";
+import { publicMetadata } from "@/lib/public-metadata";
+
+export const metadata = publicMetadata("/", "Agent harness pack directory",
+  "Find reusable agent harness, UI, retrieval, and evaluation packs. Compare instructions, inspect sources, and export markdown for your coding project.");
 
 /**
  * Home / directory landing.

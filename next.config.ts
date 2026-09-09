@@ -34,6 +34,14 @@ const redirects = [
 ];
 
 const nextConfig: NextConfig = {
+  // Catalog metadata is local: return it in <head> for browsers and plain-HTML consumers.
+  htmlLimitedBots: /.*/,
+  async headers() {
+    return ["/api/:path*", "/my-packs/:path*", "/chat/:path*", "/submit/:path*", "/workspace-a/:path*", "/workspace-b/:path*"].map((source) => ({
+      source,
+      headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+    }));
+  },
   async redirects() {
     return redirects;
   },

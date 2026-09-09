@@ -10,10 +10,12 @@
  */
 
 import Link from "next/link";
+import { publicMetadata } from "@/lib/public-metadata";
 import { getAllTraces, searchTraces } from "@/lib/trace-registry";
 import type { ChangeTrace } from "@/lib/trace-schema";
 
-export const dynamic = "force-static";
+export const metadata = publicMetadata("/traces", "Change traces",
+  "Explore change records by project, file, symbol, and tag, with source links and reusable packs.");
 
 type RawSearchParams = {
   q?: string | string[];

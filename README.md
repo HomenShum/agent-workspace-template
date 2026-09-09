@@ -4,7 +4,7 @@
 
 The repo still contains the reusable platform extracted from `FloorAI`, but the product story is now simpler:
 
-- browse verified harness packs on the homepage
+- browse harness packs and inspect their individual trust labels on the homepage
 - open detail pages with instructions, sources, and evaluation guidance
 - submit new harness packs into a lightweight review queue
 - use the built-in studio routes to preview the shared chat and right-side agent rail
@@ -69,13 +69,33 @@ Those are the first things you should add when turning the template into a real 
 
 ## Quick start
 
+For the public catalog, use Node.js 22 and a checkout without private environment files:
+
 ```bash
-npm install
-npx convex dev
-npm run seed
+npm ci
+npm run dev:app
 ```
 
-Then set `NEXT_PUBLIC_CONVEX_URL` in `.env.local` using the local Convex URL printed by `convex dev`.
+Open `http://localhost:3000`. The catalog, comparison, publisher and trace pages work without provider credentials. Studio and submission routes show **Backend Connection Missing** until you configure Convex.
+
+To configure your own backend, run `npm run dev:convex`, set `NEXT_PUBLIC_CONVEX_URL` in `.env.local` to that deployment, and deliberately run `npm run seed` if you want the sample workspaces. These commands change a backend; the keyless checks below do not call them. `npm run dev` starts both Convex and Next.
+
+## Checks and developer handoff
+
+```bash
+npm ci
+npm run check
+npm --prefix cli ci
+npm --prefix cli test
+npm --prefix cli run build
+npm --prefix mcp-server ci
+npm --prefix mcp-server run build
+npm --prefix mcp-server run verify
+```
+
+`check` runs TypeScript, real Vitest assertions, the production build, and bounded HTTP scenarios against a temporary Next server. Run it before adding `.env.local`; the HTTP verifier deliberately refuses a checkout containing that file. If you already have one, preserve it outside the repository during keyless verification and restore the same bytes afterward. Never commit credentials. The build downloads the configured Geist fonts, so it requires network access.
+
+The GitHub workflow executes all three package lanes on Ubuntu and Windows using Node 22, including dependency audits. There is no configured lint suite: the old interactive `next lint` setup command was removed instead of counting a prompt as a passing check. Read [the public contract and handoff runbook](docs/PUBLIC_CONTRACT_HANDOFF.md) for proof boundaries, crawler policy, and production verification.
 
 ## Public URL
 

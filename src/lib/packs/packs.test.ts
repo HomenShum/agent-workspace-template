@@ -14,22 +14,22 @@
  *      ≥1 for comparesWith and changelog and relatedPacks).
  *   6. Source URL validity: every sources[].url parses as a URL.
  *   7. Security review: injectionSurface is one of the enum values.
- *   8. Verified-tier richness: the one Verified pack has telemetry +
- *      transferMatrix populated (evaluator-optimizer contract).
+ *   8. Golden-eval sample metadata shape; these assertions do not certify
+ *      the sample numbers as measured results or confer Verified trust.
  *
- * Design note: this file is written against the vitest API (describe /
- * it / expect). vitest is not yet configured at the repo root, so we
- * use a local type-only shim (./vitest-shim) so tsc --noEmit passes.
- * When vitest is added to package.json, change the import below to
- *   import { describe, it, expect } from "vitest";
- * and delete vitest-shim.ts. No test-body changes are required.
+ * Run with npm test. The original no-op shim hid obsolete cohort/date
+ * assumptions; actual Vitest now executes every assertion.
  */
 
-import { describe, it, expect } from "./vitest-shim";
+import { describe, it, expect } from "vitest";
 import type { Pack } from "@/lib/pack-schema";
-import { allSeededPacks } from "./index";
+import { allSeededPacks, goldenEvalHarness } from "./index";
 
-const SLUG_RE = /^[a-z0-9-]+$/;
+const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+function expectIsoDate(value: string) {
+  expect(value).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  expect(new Date(value).toISOString().slice(0, 10)).toBe(value);
+}
 
 /**
  * Real user scenario we simulate here:
@@ -38,8 +38,16 @@ const SLUG_RE = /^[a-z0-9-]+$/;
  *    surface hold up, or does something come back blank?"
  */
 describe("seed packs (M5) — catalog surface integrity", () => {
-  it("exports exactly 8 seed packs", () => {
-    expect(allSeededPacks).toHaveLength(8);
+  it("keeps the published original and architecture cohorts discoverable", () => {
+    expect(allSeededPacks.map((pack) => pack.slug).sort()).toEqual([
+      "linear-command-palette", "shadcn-data-table", "rag-hybrid-bm25-vector",
+      "golden-eval-harness", "pattern-decision-tree", "claude-code-guide",
+      "advisor-pattern-v2", "injection-surface-audit", "four-design-questions",
+      "turn-execution-pipeline", "seven-safety-layers", "nine-context-sources",
+      "subagent-delegation-three-isolation-modes", "extensibility-four-mechanisms",
+      "session-persistence-three-channels", "agent-design-space-six-decisions",
+      "cve-pre-trust-window",
+    ].sort());
   });
 
   it("has unique slugs across the set", () => {
@@ -155,15 +163,15 @@ describe("seed packs (M5) — catalog surface integrity", () => {
         expect(pack.securityReview).toBeDefined();
         const surface = (pack.securityReview as NonNullable<Pack["securityReview"]>).injectionSurface;
         expect(["low", "medium", "high"].includes(surface)).toBe(true);
-        expect(
+        expectIsoDate(
           (pack.securityReview as NonNullable<Pack["securityReview"]>).lastScanned
-        ).toMatch(/^2026-04-(16|17)$/);
+        );
       });
 
       // Misc scalar fields
-      it("version is 0.1.0 and updatedAt is 2026-04-16 or 2026-04-17", () => {
+      it("version is 0.1.0 and updatedAt is a valid calendar date", () => {
         expect(pack.version).toBe("0.1.0");
-        expect(pack.updatedAt).toMatch(/^2026-04-(16|17)$/);
+        expectIsoDate(pack.updatedAt);
       });
 
       it("publisher is Agent Workspace", () => {
@@ -176,32 +184,31 @@ describe("seed packs (M5) — catalog surface integrity", () => {
     });
   }
 
-  // 8. Verified-tier richness
-  describe("Verified-tier pack: golden-eval-harness", () => {
-    const verified = allSeededPacks.filter((p) => p.trust === "Verified");
+  // 8. Published sample metadata, not a measured performance or trust verdict.
+  describe("Community sample: golden-eval-harness", () => {
 
-    it("has exactly one Verified pack in the seed set", () => {
-      expect(verified).toHaveLength(1);
-      expect(verified[0].slug).toBe("golden-eval-harness");
+    it("does not promote the sample to Verified because it has telemetry fields", () => {
+      expect(goldenEvalHarness.trust).toBe("Community");
+      expect(allSeededPacks).toContain(goldenEvalHarness);
     });
 
-    it("has telemetry populated with plausible numbers", () => {
-      const p = verified[0];
+    it("has sample telemetry within its schema bounds", () => {
+      const p = goldenEvalHarness;
       expect(p.telemetry).toBeDefined();
       const t = p.telemetry as NonNullable<Pack["telemetry"]>;
       expect(t.lastNRuns).toBeGreaterThan(0);
-      expect(t.passRate).toBeGreaterThan(0);
+      expect(t.passRate).toBeGreaterThanOrEqual(0);
       expect(t.passRate).toBeLessThanOrEqual(1);
       expect(t.avgTokens).toBeGreaterThan(0);
     });
 
     it("has a three-row transferMatrix across model tiers", () => {
-      const p = verified[0];
+      const p = goldenEvalHarness;
       expect(p.transferMatrix).toBeDefined();
       const matrix = p.transferMatrix as NonNullable<Pack["transferMatrix"]>;
       expect(matrix.length).toBeGreaterThanOrEqual(3);
       for (const row of matrix) {
-        expect(row.passRate).toBeGreaterThan(0);
+        expect(row.passRate).toBeGreaterThanOrEqual(0);
         expect(row.passRate).toBeLessThanOrEqual(1);
         expect(row.tokens).toBeGreaterThan(0);
         expect(row.runs).toBeGreaterThan(0);
@@ -209,7 +216,7 @@ describe("seed packs (M5) — catalog surface integrity", () => {
     });
 
     it("has a contract with required outputs and completion conditions", () => {
-      const p = verified[0];
+      const p = goldenEvalHarness;
       expect(p.contract).toBeDefined();
       const c = p.contract as NonNullable<Pack["contract"]>;
       expect(c.requiredOutputs.length).toBeGreaterThan(0);
@@ -218,7 +225,7 @@ describe("seed packs (M5) — catalog surface integrity", () => {
     });
 
     it("has layered runtimeCharter / nlh / toolSpec", () => {
-      const p = verified[0];
+      const p = goldenEvalHarness;
       expect(p.layers).toBeDefined();
       const l = p.layers as NonNullable<Pack["layers"]>;
       expect(l.runtimeCharter.length).toBeGreaterThan(0);
