@@ -92,7 +92,7 @@ export function PackCard({
             </span>
             <span className="truncate">{pack.publisher}</span>
           </span>
-          <span className="text-xs text-slate-500">{pack.updatedAt}</span>
+          <span className="text-xs text-slate-600">{pack.updatedAt}</span>
         </div>
         <div className="pt-1">
           <span className="text-xs font-medium text-slate-900">Open pack →</span>
@@ -110,7 +110,7 @@ export function TelemetryStrip({ telemetry }: { telemetry?: Telemetry }) {
   if (!telemetry) {
     return (
       <p
-        className="text-xs leading-5 text-slate-400"
+        className="text-xs leading-5 text-slate-600"
         data-testid="telemetry-absent"
       >
         Not yet measured
@@ -125,9 +125,9 @@ export function TelemetryStrip({ telemetry }: { telemetry?: Telemetry }) {
       <span className="font-semibold text-emerald-700">
         pass {formatPercent(telemetry.passRate)}
       </span>
-      <span className="px-1 text-slate-400">·</span>
+      <span className="px-1 text-slate-600">·</span>
       <span>{formatTokens(telemetry.avgTokens)} tok</span>
-      <span className="px-1 text-slate-400">·</span>
+      <span className="px-1 text-slate-600">·</span>
       <span>{formatCost(telemetry.avgCost)}</span>
     </p>
   );
@@ -159,7 +159,7 @@ export function InstallBadge({
       </span>
       {perInstallTokens > 0 ? (
         <>
-          <span className="px-1 text-slate-400">·</span>
+          <span className="px-1 text-slate-600">·</span>
           <span>~{formatTokens(tokensSaved)} tokens saved</span>
         </>
       ) : null}

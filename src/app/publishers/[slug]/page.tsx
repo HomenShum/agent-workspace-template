@@ -1,11 +1,19 @@
+import { publicMetadata } from "@/lib/public-metadata";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PackTile } from "@/components/PacksDirectory";
+import { PackCard } from "@/components/PackCard";
+import { getAllPacks } from "@/lib/pack-registry";
 import {
-  getPacksByPublisher,
   getPublisherProfileBySlug,
   publisherProfiles,
 } from "@/lib/harness-packs";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const publisher = getPublisherProfileBySlug(slug);
+  if (!publisher) notFound();
+  return publicMetadata(`/publishers/${slug}`, `${publisher.name} packs`, publisher.description);
+}
 
 export function generateStaticParams() {
   return Object.values(publisherProfiles).map((publisher) => ({ slug: publisher.slug }));
@@ -23,7 +31,7 @@ export default async function PublisherPage({
     notFound();
   }
 
-  const packs = getPacksByPublisher(publisher.name);
+  const packs = getAllPacks().filter((pack) => pack.publisher === publisher.name);
 
   return (
     <main className="app-shell">
@@ -70,7 +78,7 @@ export default async function PublisherPage({
 
           <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {packs.map((pack) => (
-              <PackTile key={pack.slug} pack={pack} />
+              <PackCard key={pack.slug} pack={pack} />
             ))}
           </section>
         </div>

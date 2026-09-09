@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PUBLIC_ORIGIN } from "@/lib/public-metadata";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
@@ -17,9 +18,9 @@ const mono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Agent Workspace",
-  description:
-    "A components-style directory for natural-language agent harness packs, now hosted at agentworkspace.attrition.sh and backed by the Agent Workspace template runtime.",
+  metadataBase: new URL(PUBLIC_ORIGIN),
+  title: { default: "Agent Workspace", template: "%s | Agent Workspace" },
+  description: "Browse agent harness packs, instructions, sources, and change traces for your next coding project.",
 };
 
 export default function RootLayout({

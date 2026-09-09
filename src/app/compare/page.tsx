@@ -18,7 +18,7 @@
  * ships on the client must be stable here.
  */
 
-import type { Metadata } from "next";
+import { publicMetadata } from "@/lib/public-metadata";
 import Link from "next/link";
 import { getAllPacks, getPackBySlug } from "@/lib/pack-registry";
 import {
@@ -29,11 +29,8 @@ import {
   SharedFieldsRow,
 } from "./page-sections";
 
-export const metadata: Metadata = {
-  title: "Compare packs — attrition.sh",
-  description:
-    "Side-by-side comparison of any two packs in the Agent Workspace catalog.",
-};
+export const metadata = publicMetadata("/compare", "Compare agent packs",
+  "Compare instructions, contracts, failure modes, and evaluation guidance for two Agent Workspace packs side by side.");
 
 type SearchParams = { [k: string]: string | string[] | undefined };
 

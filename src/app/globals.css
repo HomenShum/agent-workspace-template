@@ -75,7 +75,7 @@
   }
 
   .section-label {
-    @apply text-[11px] font-medium uppercase tracking-[0.08em] text-gray-400;
+    @apply text-[11px] font-medium uppercase tracking-[0.08em] text-slate-600;
   }
 
   .field-input {
@@ -159,7 +159,7 @@
   }
 
   .directory-sort-label {
-    @apply text-xs font-medium uppercase tracking-[0.08em] text-slate-400;
+    @apply text-xs font-medium uppercase tracking-[0.08em] text-slate-600;
   }
 
   .directory-results-chip {
@@ -171,7 +171,7 @@
   }
 
   .directory-filter-panel {
-    @apply rounded-[22px] border border-[rgba(72,57,39,0.1)] bg-[rgba(255,255,255,0.82)] px-5 py-5 lg:sticky lg:top-5 lg:self-start;
+    @apply rounded-[22px] border border-[rgba(72,57,39,0.1)] bg-[rgba(255,255,255,0.82)] px-5 py-5 lg:self-start;
   }
 
   .directory-chip {
@@ -191,7 +191,7 @@
   }
 
   .directory-filter-count {
-    @apply rounded-full border border-[rgba(72,57,39,0.08)] px-2 py-0.5 text-[11px] font-medium text-slate-400;
+    @apply rounded-full border border-[rgba(72,57,39,0.08)] px-2 py-0.5 text-[11px] font-medium text-slate-600;
   }
 
   .directory-legend-row {
@@ -224,11 +224,11 @@
   }
 
   .directory-reference-row {
-    @apply flex items-start justify-between gap-4 rounded-[16px] border border-[rgba(72,57,39,0.1)] bg-white px-4 py-4 transition hover:bg-slate-50;
+    @apply flex min-w-0 items-start justify-between gap-4 rounded-[16px] border border-[rgba(72,57,39,0.1)] bg-white px-4 py-4 transition hover:bg-slate-50;
   }
 
   .directory-reference-arrow {
-    @apply shrink-0 text-xs font-medium uppercase tracking-[0.08em] text-slate-400;
+    @apply shrink-0 text-xs font-medium uppercase tracking-[0.08em] text-slate-600;
   }
 
   .directory-pill {
@@ -318,7 +318,7 @@
   }
 
   .pack-category-label {
-    @apply text-[11px] font-medium uppercase tracking-[0.08em] text-slate-400;
+    @apply text-[11px] font-medium uppercase tracking-[0.08em] text-slate-600;
   }
 
   .pack-card-footer {
@@ -501,7 +501,7 @@
 
   .notion-meta-dot::before {
     content: "·";
-    @apply mx-1 text-slate-400;
+    @apply mx-1 text-slate-600;
   }
 
   .notion-desc {

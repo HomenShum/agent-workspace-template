@@ -234,7 +234,7 @@ export function PacksDirectory({
           <p className="section-label">Natural-language harness directory</p>
           <h1 className="directory-header-title">Agent Workspace</h1>
           <p className="directory-header-body">
-            Browse verified harness packs with source links, evaluation guidance,
+            Browse harness packs with trust labels, source links, evaluation guidance,
             and starter instructions for Claude Code, Codex, Cursor, and Convex.
           </p>
         </div>
@@ -302,7 +302,7 @@ export function PacksDirectory({
                         : ""
                     }`}
                     data-testid={`sort-chip-${option.value}`}
-                    aria-pressed={sortMode === option.value}
+                    aria-current={sortMode === option.value}
                   >
                     <span>{option.label}</span>
                   </Link>
@@ -339,7 +339,7 @@ export function PacksDirectory({
                         : ""
                     }`}
                     data-testid={`trust-chip-${trust.value}`}
-                    aria-pressed={selectedTrust === trust.value}
+                    aria-current={selectedTrust === trust.value}
                   >
                     <span>{trust.label}</span>
                     <span className="directory-filter-count">{trust.count}</span>
@@ -351,14 +351,14 @@ export function PacksDirectory({
                   <span className="pack-trust-badge pack-trust-badge-verified">
                     Verified
                   </span>
-                  <span className="text-xs leading-5 text-slate-500">
+                  <span className="text-xs leading-5 text-slate-600">
                     Source-backed packs reviewed against a stronger implementation
                     bar.
                   </span>
                 </div>
                 <div className="directory-legend-row">
                   <span className="pack-trust-badge">Community</span>
-                  <span className="text-xs leading-5 text-slate-500">
+                  <span className="text-xs leading-5 text-slate-600">
                     Useful patterns from the wider ecosystem that still need more
                     field proof.
                   </span>
@@ -375,7 +375,7 @@ export function PacksDirectory({
                     !selectedType ? "directory-category-row-active" : ""
                   }`}
                   data-testid="type-chip-all"
-                  aria-pressed={!selectedType}
+                  aria-current={!selectedType}
                 >
                   <span>All</span>
                   <span className="directory-filter-count">{packs.length}</span>
@@ -390,7 +390,7 @@ export function PacksDirectory({
                         : ""
                     }`}
                     data-testid={`type-chip-${opt.type}`}
-                    aria-pressed={selectedType === opt.type}
+                    aria-current={selectedType === opt.type}
                   >
                     <span>{opt.type}</span>
                     <span className="directory-filter-count">{opt.count}</span>
@@ -408,7 +408,7 @@ export function PacksDirectory({
                     !selectedPattern ? "directory-category-row-active" : ""
                   }`}
                   data-testid="pattern-chip-all"
-                  aria-pressed={!selectedPattern}
+                  aria-current={!selectedPattern}
                 >
                   <span>All</span>
                   <span className="directory-filter-count">{packs.length}</span>
@@ -423,7 +423,7 @@ export function PacksDirectory({
                         : ""
                     }`}
                     data-testid={`pattern-chip-${opt.pattern}`}
-                    aria-pressed={selectedPattern === opt.pattern}
+                    aria-current={selectedPattern === opt.pattern}
                   >
                     <span>{opt.pattern}</span>
                     <span className="directory-filter-count">{opt.count}</span>
@@ -447,7 +447,7 @@ export function PacksDirectory({
                         : ""
                     }`}
                     data-testid={`publisher-chip-${publisher.slug}`}
-                    aria-pressed={
+                    aria-current={
                       publisher.slug === "all"
                         ? selectedPublisherSlug === "all"
                         : selectedPublisherSlug === publisher.slug
@@ -518,7 +518,7 @@ export function PacksDirectory({
                 <span className="directory-results-count">
                   {filteredPacks.length} shown
                 </span>
-                <span className="text-sm text-slate-500">
+                <span className="text-sm text-slate-600">
                   Verified packs include starter instructions, sources, and
                   evaluation guidance.
                 </span>
@@ -678,7 +678,7 @@ function TagChipRow({
             : ""
         }`}
         data-testid="tag-chip-all"
-        aria-pressed={selectedTag === null}
+        aria-current={selectedTag === null}
       >
         All
       </Link>
@@ -697,7 +697,7 @@ function TagChipRow({
                   : ""
             }`}
             data-testid={`tag-chip-${chip.tag}`}
-            aria-pressed={active}
+            aria-current={active}
           >
             {chip.tag} · {chip.count}
           </Link>
@@ -830,7 +830,7 @@ export function PackTile({
             </span>
             <span className="truncate">{pack.publisher}</span>
           </span>
-          <span className="text-xs text-slate-500">{pack.updatedAt}</span>
+          <span className="text-xs text-slate-600">{pack.updatedAt}</span>
         </div>
       </div>
     </Link>

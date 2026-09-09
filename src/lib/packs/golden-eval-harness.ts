@@ -5,7 +5,7 @@ import type { Pack } from "@/lib/pack-schema";
  *
  * Design a golden set, build LLM-as-judge rubrics, wire trace
  * observability, enforce pass-rate thresholds in CI. The canonical
- * evaluator-optimizer harness. Verified tier — telemetry populated.
+ * evaluator-optimizer harness. Community sample with illustrative telemetry.
  */
 export const goldenEvalHarness: Pack = {
   slug: "golden-eval-harness",
