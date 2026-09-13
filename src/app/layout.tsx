@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PUBLIC_ORIGIN } from "@/lib/public-metadata";
+import { BUILD_SHA } from "@/lib/build-identity";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
@@ -21,6 +22,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(PUBLIC_ORIGIN),
   title: { default: "Agent Workspace", template: "%s | Agent Workspace" },
   description: "Browse agent harness packs, instructions, sources, and change traces for your next coding project.",
+  other: {
+    "agent-workspace-build-sha": BUILD_SHA,
+  },
 };
 
 export default function RootLayout({

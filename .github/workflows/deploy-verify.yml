@@ -1,0 +1,42 @@
+name: Deploy verify
+
+# Vercel's GitHub integration posts deployment_status events with no secrets needed to read
+# them. Unlike NodeVoice (two sibling Vercel projects deploying from one repo), this repo has
+# a single Vercel project — `gh api repos/HomenShum/agent-workspace-template/deployments?per_page=3`
+# and the matching statuses endpoint both show the production environment as the bare string
+# "Production" with state "success", so an exact match is enough here (no name/contains filter
+# needed).
+on:
+  deployment_status:
+
+permissions:
+  contents: read
+  deployments: read
+
+jobs:
+  verify-live-identity:
+    if: >-
+      github.event.deployment_status.state == 'success' &&
+      github.event.deployment_status.environment == 'Production'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Poll the live meta tag for the deployed commit sha
+        env:
+          EXPECTED_SHA: ${{ github.event.deployment.sha }}
+          LIVE_URL: https://agentworkspace-flax.vercel.app/
+        run: |
+          set -euo pipefail
+          deadline=$((SECONDS + 180))
+          found=""
+          while [ "$SECONDS" -lt "$deadline" ]; do
+            body="$(curl -fsS --max-time 10 "$LIVE_URL" || true)"
+            found="$(printf '%s' "$body" | grep -oE '<meta name="agent-workspace-build-sha" content="[0-9a-f]{40}"' | grep -oE '[0-9a-f]{40}' || true)"
+            if [ "$found" = "$EXPECTED_SHA" ]; then
+              echo "Live meta matches deployed commit: $found"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::agent-workspace-build-sha never matched the deployed commit ($EXPECTED_SHA); last seen: '${found:-<none>}'" >&2
+          exit 1
