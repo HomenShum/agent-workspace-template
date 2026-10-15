@@ -1,11 +1,11 @@
-# Publishing `attrition-mcp` and `attrition`
+# Publishing `attrition-mcp` and `attrition-sh`
 
 This repo ships two npm packages:
 
 | Package | Dir | Purpose |
 |---|---|---|
 | `attrition-mcp` | `mcp-server/` | MCP stdio server for the attrition.sh catalog |
-| `attrition` | `cli/` | CLI for installing catalog packs into `.claude/skills/` |
+| `attrition-sh` | `cli/` | CLI for installing catalog packs into `.claude/skills/` |
 
 Both are TypeScript ESM, Node >= 20, publish compiled `dist/` plus `README.md` and `LICENSE` only. `prepublishOnly` runs `npm run build` automatically — you cannot ship a stale `dist/`.
 
@@ -37,13 +37,13 @@ cd ../cli
 npm publish --access public
 ```
 
-Both packages are published under their owner account's public scope (no `@scope/` prefix — they're flat names `attrition` and `attrition-mcp`). `publishConfig.access` is pinned to `public` in both `package.json` files, so the `--access public` flag is redundant but harmless.
+The package manifests declare flat names `attrition-sh` and `attrition-mcp` (no `@scope/` prefix). Before publishing, verify that your npm account can publish both names. `publishConfig.access` is pinned to `public` in both `package.json` files, so the `--access public` flag is redundant but harmless.
 
 After publish:
 
 - `git push && git push --tags` to sync the version tag created by `npm version`.
-- Verify the published artifact on npm: `npm view attrition` and `npm view attrition-mcp`. Check `dist-tags.latest` matches the version you just shipped.
-- Smoke test the published tarball: `npx -y attrition-mcp@latest --help` and `npx -y attrition@latest pack list`.
+- Verify the published artifact on npm: `npm view attrition-sh` and `npm view attrition-mcp`. Check `dist-tags.latest` matches the version you just shipped.
+- Smoke test the published tarball: `npx -y attrition-mcp@latest --help` and `npx -y attrition-sh@latest pack list`.
 
 ---
 
@@ -56,14 +56,14 @@ Before every publish, install the tarball into a scratch project to catch `files
 cd cli
 npm run build
 npm pack
-# -> produces attrition-0.1.0.tgz
+# -> produces attrition-sh-0.1.0.tgz
 
 # In a scratch dir
 mkdir /tmp/attrition-smoke && cd /tmp/attrition-smoke
 npm init -y
-npm install -g /absolute/path/to/attrition-0.1.0.tgz
-attrition --version
-attrition pack list --registry https://agentworkspace.attrition.sh
+npm install -g /absolute/path/to/attrition-sh-0.1.0.tgz
+attrition-sh --version
+attrition-sh pack list --registry https://agentworkspace.attrition.sh
 ```
 
 For the MCP server:
@@ -113,8 +113,8 @@ Both packages read `ATTRITION_REGISTRY_URL` at runtime. To point at a staging or
 "env": { "ATTRITION_REGISTRY_URL": "https://staging.attrition.internal" }
 
 # CLI — flag or env
-attrition pack list --registry https://staging.attrition.internal
-ATTRITION_REGISTRY_URL=https://staging.attrition.internal attrition pack install rag-hybrid-bm25-vector
+attrition-sh pack list --registry https://staging.attrition.internal
+ATTRITION_REGISTRY_URL=https://staging.attrition.internal attrition-sh pack install rag-hybrid-bm25-vector
 ```
 
 The registry must serve the same JSON shape as `agentworkspace.attrition.sh`. Nothing in the npm-published artifact hardcodes the prod URL as a compile-time constant — it's a default, not a pin.
@@ -130,13 +130,13 @@ You cannot unpublish after the 72-hour grace window. Use `npm deprecate` to warn
 npm deprecate "attrition-mcp@0.2.3" "Broken section parsing — upgrade to 0.2.4"
 
 # Warn a whole minor line
-npm deprecate "attrition@<=0.3.0" "Critical bug in install atomicity — upgrade to 0.3.1+"
+npm deprecate "attrition-sh@<=0.3.0" "Critical bug in install atomicity — upgrade to 0.3.1+"
 ```
 
 Ship the fix as a normal patch release. `npm deprecate` does not remove the tarball; it adds a warning printed during install. Combine with a pinned `dist-tags.latest` that points at the fixed version:
 
 ```bash
-npm dist-tag add attrition@0.3.1 latest
+npm dist-tag add attrition-sh@0.3.1 latest
 ```
 
 For a truly dangerous version (credential leak, RCE), contact npm support to request unpublish within the allowed window. Otherwise, deprecate + retract `latest` is the standard recovery.
