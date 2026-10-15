@@ -153,7 +153,7 @@ If you are coming from the `FloorAI` repo, the original extraction notes live th
 The catalog ships two npm packages you can wire into Claude Code, Cursor, or Codex:
 
 - **`attrition-mcp`** — stdio MCP server. Browse, resolve, and fetch packs from within your agent.
-- **`attrition`** — CLI. Install a pack into your repo as a `.claude/skills/` skill plus an `AGENTS.md` fragment.
+- **`attrition-sh`** — CLI. Install a pack into your repo as a `.claude/skills/` skill plus an `AGENTS.md` fragment.
 
 ### MCP server
 
