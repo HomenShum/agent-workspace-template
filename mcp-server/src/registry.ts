@@ -2,7 +2,7 @@
  * Thin HTTP client against the attrition.sh pack registry.
  *
  * - Base URL: ATTRITION_REGISTRY_URL env, default https://agentworkspace.attrition.sh
- * - Timeout: 10s hard budget via AbortController on every fetch
+ * - Timeout: 10s hard budget through headers and body via AbortSignal.timeout
  * - Retries: none (fail fast — agents amplify every hidden stall)
  * - Bounded reads: markdown responses capped at MAX_MD_BYTES to prevent
  *   PAYLOAD_TOO_LARGE from wrecking the agent's context
@@ -49,12 +49,10 @@ function getBaseUrl(): string {
 }
 
 async function timedFetch(url: string, accept: string): Promise<Response> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
   try {
     const res = await fetch(url, {
       method: "GET",
-      signal: controller.signal,
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
       headers: {
         Accept: accept,
         "User-Agent": "attrition-mcp/0.1.0",
@@ -63,15 +61,13 @@ async function timedFetch(url: string, accept: string): Promise<Response> {
     return res;
   } catch (err) {
     const e = err as Error & { name?: string };
-    if (e.name === "AbortError") {
+    if (e.name === "AbortError" || e.name === "TimeoutError") {
       throw new RegistryError(
         "TIMEOUT",
         `Registry request timed out after ${FETCH_TIMEOUT_MS}ms`
       );
     }
     throw new RegistryError("NETWORK_ERROR", e.message || "Network error");
-  } finally {
-    clearTimeout(timer);
   }
 }
 
@@ -114,6 +110,15 @@ async function readBodyBounded(res: Response, maxBytes: number): Promise<string>
     }
     out += decoder.decode();
     return out;
+  } catch (err) {
+    const e = err as Error;
+    if (e.name === "AbortError" || e.name === "TimeoutError") {
+      throw new RegistryError(
+        "TIMEOUT",
+        `Registry request timed out after ${FETCH_TIMEOUT_MS}ms`
+      );
+    }
+    throw err;
   } finally {
     try {
       reader.releaseLock();

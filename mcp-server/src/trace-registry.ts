@@ -3,7 +3,7 @@
  *
  * Mirrors `registry.ts` patterns exactly:
  *   - Base URL: ATTRITION_REGISTRY_URL env, default https://agentworkspace.attrition.sh
- *   - 10s hard budget via AbortController on every fetch
+ *   - 10s hard budget through headers and body via AbortSignal.timeout
  *   - No retries (fail fast — agents amplify every hidden stall)
  *   - Bounded reads: 5 MB JSON cap, 1 MB markdown cap
  *   - URL validated before first fetch (SSRF guard — http/https only)
@@ -62,12 +62,10 @@ function getBaseUrl(): string {
 }
 
 async function timedFetch(url: string, accept: string): Promise<Response> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
   try {
     const res = await fetch(url, {
       method: "GET",
-      signal: controller.signal,
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
       headers: {
         Accept: accept,
         "User-Agent": "attrition-mcp/0.1.0",
@@ -76,7 +74,7 @@ async function timedFetch(url: string, accept: string): Promise<Response> {
     return res;
   } catch (err) {
     const e = err as Error & { name?: string };
-    if (e.name === "AbortError") {
+    if (e.name === "AbortError" || e.name === "TimeoutError") {
       throw new TraceRegistryError(
         "TIMEOUT",
         `Trace registry request timed out after ${FETCH_TIMEOUT_MS}ms`
@@ -86,8 +84,6 @@ async function timedFetch(url: string, accept: string): Promise<Response> {
       "NETWORK_ERROR",
       e.message || "Network error"
     );
-  } finally {
-    clearTimeout(timer);
   }
 }
 
@@ -132,6 +128,15 @@ async function readBodyBounded(
     }
     out += decoder.decode();
     return out;
+  } catch (err) {
+    const e = err as Error;
+    if (e.name === "AbortError" || e.name === "TimeoutError") {
+      throw new TraceRegistryError(
+        "TIMEOUT",
+        `Trace registry request timed out after ${FETCH_TIMEOUT_MS}ms`
+      );
+    }
+    throw err;
   } finally {
     try {
       reader.releaseLock();

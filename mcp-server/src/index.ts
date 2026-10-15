@@ -315,6 +315,9 @@ const TOOLS = [
 function toContent(value: unknown): CallToolResult {
   return {
     content: [{ type: "text", text: JSON.stringify(value) }],
+    ...(value !== null && typeof value === "object" && "error" in value
+      ? { isError: true }
+      : {}),
   };
 }
 

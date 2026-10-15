@@ -18,6 +18,11 @@
 
 import { createServer as createHttpServer, type Server as HttpServer } from "node:http";
 import { AddressInfo } from "node:net";
+import assert from "node:assert/strict";
+import { fileURLToPath } from "node:url";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import * as traceRegistry from "../src/trace-registry.js";
 
 // --- Mocked registry fixtures ---------------------------------------------
 
@@ -293,7 +298,144 @@ async function run(): Promise<void> {
     );
   });
 
+  await verifyReliability();
   console.log("\nMCP OK");
+}
+
+/** A coding agent must distinguish failure and continue working while peers stall. */
+async function verifyReliability(): Promise<void> {
+  const trace = { id: "ct_2026-04-17", rows: [] };
+  let stalled = false;
+  let headersSent = 0;
+  let bodiesClosed = 0;
+  const closures: Promise<void>[] = [];
+  const server = createHttpServer((req, res) => {
+    const url = new URL(req.url ?? "/", "http://127.0.0.1");
+    const control = url.pathname === "/api/packs/control-pack";
+    if (url.pathname === "/api/packs/missing-pack") {
+      res.writeHead(404).end();
+      return;
+    }
+    const markdown = url.pathname.startsWith("/packs/") || url.pathname.endsWith("/raw");
+    res.writeHead(200, { "content-type": markdown ? "text/markdown" : "application/json" });
+    if (stalled && !control) {
+      closures.push(new Promise<void>((resolve) => res.once("close", () => {
+        bodiesClosed++;
+        resolve();
+      })));
+      res.flushHeaders();
+      res.write(markdown ? "# Partial body\n" : '{"partial":');
+      headersSent++;
+      return; // The application deadline, not the fixture, must end this body.
+    }
+    if (markdown) res.end("## Summary\nReady\n");
+    else if (url.pathname === "/api/packs") res.end(JSON.stringify({ packs: FIXTURE_PACKS }));
+    else if (url.pathname.startsWith("/api/packs/")) {
+      res.end(JSON.stringify({ pack: { ...FIXTURE_PACKS[0], ...(control ? { slug: "control-pack" } : {}) } }));
+    } else if (url.pathname === "/api/traces") res.end(JSON.stringify({ traces: [], total: 0 }));
+    else res.end(JSON.stringify({ trace }));
+  });
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const fixture = baseUrl(server);
+  process.env.ATTRITION_REGISTRY_URL = fixture;
+  const transport = new StdioClientTransport({
+    command: process.execPath,
+    args: [fileURLToPath(new URL("../dist/index.js", import.meta.url))],
+    cwd: fileURLToPath(new URL("..", import.meta.url)),
+    env: { ATTRITION_REGISTRY_URL: fixture },
+    stderr: "pipe",
+  });
+  transport.stderr?.resume();
+  const client = new Client({ name: "mcp-reliability-verifier", version: "1.0.0" });
+  let childClosed = false;
+  try {
+    await client.connect(transport, { timeout: 3_000 });
+    const previousClose = transport.onclose;
+    transport.onclose = () => { childClosed = true; previousClose?.(); };
+    const tools = await client.listTools({}, { timeout: 3_000 });
+    assert.equal(tools.tools.length, 8);
+    const h = await loadHandlers();
+    const call = (name: string, args: Record<string, unknown>) =>
+      client.callTool({ name, arguments: args }, undefined, { timeout: 13_000 });
+    const success = await call("get_pack", { slug: "advisor-pattern" });
+    assert.notEqual(success.isError, true);
+    assert.deepEqual(success.content, [{ type: "text", text: JSON.stringify(await h.handleGetPack({ slug: "advisor-pattern" })) }]);
+    for (const [name, args, code] of [
+      ["get_pack", { slug: "../etc/passwd" }, "INVALID_SLUG"],
+      ["get_trace", { id: "../etc/passwd" }, "INVALID_TRACE_ID"],
+      ["get_pack", { slug: "missing-pack" }, "NOT_FOUND"],
+    ] as const) {
+      const result = await call(name, args);
+      assert.equal(result.isError, true, `${name}: wire tool error flag`);
+      const text = result.content.find((item) => item.type === "text");
+      assert(text && text.type === "text");
+      assert.equal(JSON.parse(text.text).error.code, code);
+    }
+    console.log("PASS: actual SDK stdio handshake, eight tools, unchanged success payload and explicit pack/trace errors");
+
+    const operations: Array<[string, () => Promise<unknown>]> = [
+      ["pack list JSON", () => h.handleResolvePackId({ query: "advisor" })],
+      ["pack get JSON", () => h.handleGetPack({ slug: "advisor-pattern" })],
+      ["pack Markdown", () => h.handleGetPackSection({ slug: "advisor-pattern", section: "summary" })],
+      ["trace list JSON", () => h.handleSearchChangeTraces({ query: "fixture" })],
+      ["trace get JSON", () => h.handleGetTrace({ id: trace.id })],
+      // No current tool calls getRawTrace; directly cover its shared body reader.
+      ["trace Markdown", () => traceRegistry.getRawTrace(trace.id)],
+    ];
+    for (let wave = 1; wave <= 2; wave++) {
+      stalled = true;
+      const first = closures.length;
+      const started = performance.now();
+      let watchdog: ReturnType<typeof setTimeout>;
+      const expired = new Promise<never>((_, reject) => {
+        watchdog = setTimeout(() => reject(new Error("External 13s watchdog: application failed to finish")), 13_000);
+      });
+      try {
+        const pending = operations.map(async ([label, operation]) => {
+          const value = await operation().catch((err: unknown) => err);
+          const code = value instanceof traceRegistry.TraceRegistryError
+            ? value.code : (value as { error?: { code: string } }).error?.code;
+          assert.equal(code, "TIMEOUT", label);
+          assert(performance.now() - started < 12_000, `${label}: application deadline before 12s`);
+        });
+        for (const [name, args] of [
+          ["get_pack", { slug: "advisor-pattern" }],
+          ["get_trace", { id: trace.id }],
+        ] as const) {
+          pending.push((async () => {
+            const result = await call(name, args);
+            assert.equal(result.isError, true, `${name}: wire timeout flag`);
+            const text = result.content.find((item) => item.type === "text");
+            assert(text && text.type === "text");
+            assert.equal(JSON.parse(text.text).error.code, "TIMEOUT");
+            assert(performance.now() - started < 12_000, `${name}: wire timeout before 12s`);
+          })());
+        }
+        const healthyStarted = performance.now();
+        const healthy = await call("get_pack", { slug: "control-pack" });
+        assert.notEqual(healthy.isError, true);
+        assert(performance.now() - healthyStarted < 3_000, "healthy peer progresses during stalls");
+        await Promise.race([Promise.all(pending), expired]);
+        assert.equal(closures.length - first, 8, "all eight responses actually sent partial bodies");
+        await Promise.race([Promise.all(closures.slice(first)), expired]);
+        assert.equal(bodiesClosed, headersSent, "application abort closes all stalled responses");
+        console.log(`PASS: body-stall wave ${wave}: eight concurrent JSON/Markdown and stdio TIMEOUTs in ${Math.round(performance.now() - started)}ms; healthy peer and body cleanup`);
+      } finally {
+        clearTimeout(watchdog!);
+        stalled = false;
+      }
+      const recovered = await call("get_pack", { slug: "advisor-pattern" });
+      assert.deepEqual(recovered, success, "same session recovers with unchanged success payload");
+    }
+  } finally {
+    // Destroy only this fixture's connections even if a regression leaves bodies pending.
+    await client.close();
+    server.closeAllConnections();
+    await new Promise<void>((resolve, reject) => server.close((err) => err ? reject(err) : resolve()));
+  }
+  assert(childClosed, "owned stdio child close observed");
+  assert(!server.listening, "owned loopback server closed");
+  console.log("PASS: repeated-wave recovery, owned stdio child and loopback fixture cleanup");
 }
 
 run().catch((err) => {
