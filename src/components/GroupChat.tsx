@@ -154,7 +154,7 @@ export function GroupChat({ operatorId, operatorName }: GroupChatProps) {
               value={input}
               onChange={(event) => setInput(event.target.value)}
               placeholder={`Message # general as ${operatorName}...`}
-              className="flex-1 bg-transparent text-sm outline-none placeholder:text-gray-400"
+              className="flex-1 bg-transparent text-sm outline-hidden placeholder:text-gray-400"
               disabled={loading}
             />
             <button
