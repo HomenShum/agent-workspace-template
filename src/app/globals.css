@@ -1,6 +1,14 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss" source(none);
+@source "../pages/**/*.{js,ts,jsx,tsx,mdx}";
+@source "../components/**/*.{js,ts,jsx,tsx,mdx}";
+@source "./**/*.{js,ts,jsx,tsx,mdx}";
+
+@theme {
+  --color-status-success: #16a34a;
+  --color-status-warning: #d97706;
+  --color-status-danger: #dc2626;
+  --color-status-info: #2563eb;
+}
 
 :root {
   --bg: #faf3e7;
@@ -79,7 +87,7 @@
   }
 
   .field-input {
-    @apply w-full rounded-[16px] border border-[rgba(72,57,39,0.12)] bg-white px-3 py-2 text-sm outline-none transition;
+    @apply w-full rounded-[16px] border border-[rgba(72,57,39,0.12)] bg-white px-3 py-2 text-sm outline-hidden transition;
   }
 
   .field-input:focus {
@@ -124,6 +132,7 @@
 
   .directory-header-title {
     @apply text-4xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-[2.7rem];
+    line-height: 2.5rem;
   }
 
   .directory-header-body {
@@ -497,6 +506,7 @@
 
   .notion-meta {
     @apply flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-600;
+    line-height: 1.25rem;
   }
 
   .notion-meta-dot::before {

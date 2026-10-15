@@ -52,7 +52,7 @@ export default function ComparePicker({
           onChange={(e) => setA(e.target.value)}
           aria-label="Pack A"
           data-testid="compare-picker-a"
-          className={`w-full rounded-[14px] bg-white px-3 py-2.5 text-sm text-slate-900 ${aRing} focus:outline-none focus:ring-2 focus:ring-sky-400`}
+          className={`w-full rounded-[14px] bg-white px-3 py-2.5 text-sm text-slate-900 ${aRing} focus:outline-hidden focus:ring-2 focus:ring-sky-400`}
         >
           <option value="">— pick a pack —</option>
           {groups.map(([type, items]) => (
@@ -77,7 +77,7 @@ export default function ComparePicker({
           onChange={(e) => setB(e.target.value)}
           aria-label="Pack B"
           data-testid="compare-picker-b"
-          className={`w-full rounded-[14px] bg-white px-3 py-2.5 text-sm text-slate-900 ${bRing} focus:outline-none focus:ring-2 focus:ring-sky-400`}
+          className={`w-full rounded-[14px] bg-white px-3 py-2.5 text-sm text-slate-900 ${bRing} focus:outline-hidden focus:ring-2 focus:ring-sky-400`}
         >
           <option value="">— pick a pack —</option>
           {groups.map(([type, items]) => (

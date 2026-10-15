@@ -198,14 +198,14 @@ export function ForkEditor({
             id="fork-editor-textarea"
             value={markdown}
             onChange={(e) => setMarkdown(e.target.value)}
-            className="h-[70vh] w-full resize-y rounded-md border border-slate-300 bg-white px-3 py-2 font-mono text-sm leading-6 text-slate-900 shadow-inner focus:border-slate-500 focus:outline-none"
+            className="h-[70vh] w-full resize-y rounded-md border border-slate-300 bg-white px-3 py-2 font-mono text-sm leading-6 text-slate-900 inset-shadow-sm focus:border-slate-500 focus:outline-hidden"
             spellCheck={false}
           />
         </div>
         <div className="flex flex-col gap-2">
           <span className="section-label">Preview</span>
           <div
-            className="prose prose-slate h-[70vh] max-w-none overflow-auto rounded-md border border-slate-200 bg-white px-5 py-4 text-sm leading-6 text-slate-900 shadow-inner"
+            className="prose prose-slate h-[70vh] max-w-none overflow-auto rounded-md border border-slate-200 bg-white px-5 py-4 text-sm leading-6 text-slate-900 inset-shadow-sm"
             // renderMarkdown escapes first, then emits only allow-listed tags.
             dangerouslySetInnerHTML={{ __html: previewHtml }}
           />

@@ -216,7 +216,7 @@ export default async function TracesDirectoryPage({
                   type="search"
                   defaultValue={filters.q}
                   placeholder="scenario · symbol · file · hook · tag"
-                  className="mt-2 w-full rounded-[14px] border border-[rgba(72,57,39,0.16)] bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-300"
+                  className="mt-2 w-full rounded-[14px] border border-[rgba(72,57,39,0.16)] bg-white px-3 py-2 text-sm text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-slate-300"
                 />
               </div>
               {/* Preserve other active filters through the GET submit */}

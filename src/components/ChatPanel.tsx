@@ -407,7 +407,7 @@ export function ChatPanel({
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-5 right-5 z-40 rounded-[22px] border border-[rgba(72,57,39,0.12)] bg-white/95 px-4 py-3 shadow-xl backdrop-blur"
+          className="fixed bottom-5 right-5 z-40 rounded-[22px] border border-[rgba(72,57,39,0.12)] bg-white/95 px-4 py-3 shadow-xl backdrop-blur-sm"
         >
           <p className="text-left text-xs uppercase tracking-[0.18em] text-slate-400">Assistant</p>
           <p className="mt-1 text-sm font-semibold text-slate-900">{workspaceLabel || "Shared channel"}</p>
@@ -415,7 +415,7 @@ export function ChatPanel({
       ) : null}
 
       <aside
-        className={`fixed inset-y-3 right-3 z-50 flex w-[min(560px,calc(100vw-1.5rem))] flex-col rounded-[28px] border border-[rgba(72,57,39,0.12)] bg-[rgba(255,250,243,0.98)] shadow-2xl backdrop-blur transition-transform duration-300 ${
+        className={`fixed inset-y-3 right-3 z-50 flex w-[min(560px,calc(100vw-1.5rem))] flex-col rounded-[28px] border border-[rgba(72,57,39,0.12)] bg-[rgba(255,250,243,0.98)] shadow-2xl backdrop-blur-sm transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "translate-x-[110%]"
         }`}
       >
