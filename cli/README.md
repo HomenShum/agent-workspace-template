@@ -10,7 +10,7 @@ Catalog: <https://agentworkspace.attrition.sh>
 npx attrition-sh pack install rag-hybrid-bm25-vector
 ```
 
-`rag-hybrid-bm25-vector` is a real slug in the catalog — swap it for any pack returned by `attrition pack list`.
+`rag-hybrid-bm25-vector` is a real slug in the catalog — swap it for any pack returned by `attrition-sh pack list`.
 
 This creates:
 
@@ -22,11 +22,11 @@ Re-running the same install is **idempotent**: the AGENTS.md fragment is replace
 
 ## Commands
 
-- `attrition pack install <slug>` — install a pack (default target: Claude Code)
-- `attrition pack install <slug> --target=cursor` — install as a Cursor rule (`.cursor/rules/<slug>.mdc`)
-- `attrition pack list` — list all registry packs
-- `attrition pack search <query>` — search packs
-- `attrition pack verify` — compare installed versions against the registry
+- `attrition-sh pack install <slug>` — install a pack (default target: Claude Code)
+- `attrition-sh pack install <slug> --target=cursor` — install as a Cursor rule (`.cursor/rules/<slug>.mdc`)
+- `attrition-sh pack list` — list all registry packs
+- `attrition-sh pack search <query>` — search packs
+- `attrition-sh pack verify` — compare installed versions against the registry
 
 ## Cursor users
 
@@ -37,7 +37,7 @@ npx attrition-sh pack install rag-hybrid-bm25-vector --target=cursor
 With `--target=cursor`, the CLI writes:
 
 - `.cursor/rules/<slug>.mdc` — the rule, with Cursor-style MDC frontmatter (`description`, `globs`, `alwaysApply: false`). Cursor picks up any file under `.cursor/rules/*.mdc` automatically — no additional project config required.
-- `.attrition/installed.json` — the same lockfile as the Claude Code target, but with `target: "cursor"` recorded per pack so `attrition pack verify` and the catalog reverse-index can tell the targets apart.
+- `.attrition/installed.json` — the same lockfile as the Claude Code target, but with `target: "cursor"` recorded per pack so `attrition-sh pack verify` and the catalog reverse-index can tell the targets apart.
 
 No `AGENTS.md` is created or modified with `--target=cursor`. Claude Code and Cursor can coexist in the same repo: install pack A to `claude-code` and pack B to `cursor` and both end up tracked in the same lockfile with distinct `target` fields.
 
