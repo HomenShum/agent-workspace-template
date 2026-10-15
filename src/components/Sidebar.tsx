@@ -21,7 +21,7 @@ export function Sidebar() {
 
 function HeaderFallback() {
   return (
-    <header className="sticky top-0 z-40 border-b border-[rgba(72,57,39,0.12)] bg-[rgba(255,250,244,0.92)] backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-[rgba(72,57,39,0.12)] bg-[rgba(255,250,244,0.92)] backdrop-blur-sm">
       <div className="mx-auto flex max-w-[1400px] items-center justify-between px-4 py-3 sm:px-5">
         <Link href="/" className="text-base font-semibold tracking-[-0.03em] text-slate-950">
           Agent Workspace
@@ -38,7 +38,7 @@ function HeaderInner() {
   const showOperator = !!operator && pathname !== "/";
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[rgba(72,57,39,0.12)] bg-[rgba(255,250,244,0.92)] backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-[rgba(72,57,39,0.12)] bg-[rgba(255,250,244,0.92)] backdrop-blur-sm">
       <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-4 py-3 sm:px-5">
         <div className="flex items-center gap-5">
           <Link href="/" className="header-brand">

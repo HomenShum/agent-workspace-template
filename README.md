@@ -71,6 +71,8 @@ Those are the first things you should add when turning the template into a real 
 
 For the public catalog, use Node.js 22 and a checkout without private environment files:
 
+The Tailwind 4 UI requires Safari 16.4+, Chrome 111+, or Firefox 128+ ([browser requirements](https://tailwindcss.com/docs/upgrade-guide#browser-requirements)).
+
 ```bash
 npm ci
 npm run dev:app

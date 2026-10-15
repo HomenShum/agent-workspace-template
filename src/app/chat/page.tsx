@@ -11,7 +11,7 @@ function ChatPreviewShell() {
     <div className="min-h-[calc(100vh-16px)] bg-[radial-gradient(circle_at_top,#eef2ff_0%,#ffffff_32%,#ffffff_100%)]">
       <div className="mx-auto flex min-h-[calc(100vh-16px)] max-w-[1600px] flex-col px-4 py-4 sm:px-6 lg:px-8 xl:pr-[580px]">
         <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col">
-          <header className="mb-4 rounded-[24px] border border-[rgba(72,57,39,0.12)] bg-white/95 px-6 py-5 shadow-[0_18px_40px_rgba(33,27,20,0.05)] backdrop-blur">
+          <header className="mb-4 rounded-[24px] border border-[rgba(72,57,39,0.12)] bg-white/95 px-6 py-5 shadow-[0_18px_40px_rgba(33,27,20,0.05)] backdrop-blur-sm">
             <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate-400">
               Shared Channel
             </p>
@@ -60,7 +60,7 @@ function ChatPageInner() {
     <div className="min-h-[calc(100vh-16px)] bg-[radial-gradient(circle_at_top,#eef2ff_0%,#ffffff_32%,#ffffff_100%)]">
       <div className="mx-auto flex min-h-[calc(100vh-16px)] max-w-[1600px] flex-col px-4 py-4 sm:px-6 lg:px-8 xl:pr-[580px]">
         <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col">
-          <header className="mb-4 rounded-[24px] border border-[rgba(72,57,39,0.12)] bg-white/95 px-6 py-5 shadow-[0_18px_40px_rgba(33,27,20,0.05)] backdrop-blur">
+          <header className="mb-4 rounded-[24px] border border-[rgba(72,57,39,0.12)] bg-white/95 px-6 py-5 shadow-[0_18px_40px_rgba(33,27,20,0.05)] backdrop-blur-sm">
             <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate-400">
               Shared Channel
             </p>
